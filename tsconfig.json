@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "commonjs",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "lib": ["es5", "es6", "dom"],
+    "allowJs": true,
+    "checkJs": true
+  },
+  "include": [
+      "src/**/*"
+  ]
+}
