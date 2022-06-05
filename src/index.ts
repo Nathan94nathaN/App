@@ -18,7 +18,7 @@ function setHandler(dir: string, cb: (exportation: any) => void): void {
 
 setHandler("events", (event: Event) => {
   if (event.name) {
-    client.on(event.name, (...args) => event.execute(...args, client));
+    client.on(event.name, (...args) => event.execute(client, ...args));
     client.log(
       `Loaded event ${event.name[0].toUpperCase() + event.name.slice(1)}`,
       "event"

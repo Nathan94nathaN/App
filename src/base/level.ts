@@ -3,7 +3,7 @@ import { User } from "../@types/index";
 import UserSchema from "../models/User";
 
 export default class XP {
-  static async setURL(url: string) {
+  static async setURL({ url }: { url: string }): Promise<typeof mongoose> {
     return mongoose.connect(url).catch((err: Error) => {
       throw err;
     });
@@ -13,7 +13,12 @@ export default class XP {
     return Math.random() * (max - min) + min;
   }
 
-  static async createUser(user: User) {
+  static async createUser(
+    user: User
+  ): Promise<
+    mongoose.Document<unknown, any, User> &
+      User & { _id: mongoose.Types.ObjectId }
+  > {
     const isUser = await UserSchema.findOne({ id: user.id });
     if (isUser) throw new Error("The user already exists.");
     const newUser = new UserSchema(user);
@@ -34,7 +39,13 @@ export default class XP {
     return IsUser;
   }
 
-  static async addXP(id: User["id"], xp: number) {
+  static async addXP({
+    id,
+    xp,
+  }: {
+    id: User["id"];
+    xp: number;
+  }): Promise<number> {
     if (xp < 0 || isNaN(xp)) throw new TypeError("The xp is not a number.");
 
     const IsUser = await UserSchema.findOne({ id: id });
@@ -49,7 +60,13 @@ export default class XP {
     return IsUser.xp;
   }
 
-  static async AddLevel(id: User["id"], level: number) {
+  static async AddLevel({
+    id,
+    level,
+  }: {
+    id: User["id"];
+    level: number;
+  }): Promise<number> {
     if (level < 0 || isNaN(level))
       throw new TypeError("The level is not a number.");
 
@@ -64,7 +81,13 @@ export default class XP {
     return IsUser.level;
   }
 
-  static async setXP(id: User["id"], xp: number) {
+  static async setXP({
+    id,
+    xp,
+  }: {
+    id: User["id"];
+    xp: number;
+  }): Promise<number> {
     if (xp < 0 || isNaN(xp)) throw new TypeError("The xp is not a number.");
 
     const IsUser = await UserSchema.findOne({ id: id });
@@ -79,7 +102,13 @@ export default class XP {
     return IsUser.xp;
   }
 
-  static async setLevel(id: User["id"], level: number) {
+  static async setLevel({
+    id,
+    level,
+  }: {
+    id: User["id"];
+    level: number;
+  }): Promise<number> {
     if (level < 0 || isNaN(level))
       throw new TypeError("The level is not a number.");
 
@@ -94,7 +123,13 @@ export default class XP {
     return IsUser.level;
   }
 
-  static async subtractXP(id: User["id"], xp: number) {
+  static async subtractXP({
+    id,
+    xp,
+  }: {
+    id: User["id"];
+    xp: number;
+  }): Promise<number> {
     if (xp < 0 || isNaN(xp)) throw new TypeError("The xp is not a number.");
 
     const IsUser = await UserSchema.findOne({ id: id });
@@ -109,7 +144,13 @@ export default class XP {
     return IsUser.xp;
   }
 
-  static async subtractLevel(id: User["id"], level: number) {
+  static async subtractLevel({
+    id,
+    level,
+  }: {
+    id: User["id"];
+    level: number;
+  }): Promise<number> {
     if (level < 0 || isNaN(level))
       throw new TypeError("The level is not a number.");
 
@@ -124,14 +165,21 @@ export default class XP {
     return IsUser.level;
   }
 
-  static async getUser(id: User["id"]) {
+  static async getUser({
+    id,
+  }: {
+    id: User["id"];
+  }): Promise<
+    mongoose.Document<unknown, any, User> &
+      User & { _id: mongoose.Types.ObjectId }
+  > {
     const IsUser = await UserSchema.findOne({ id: id });
     if (!IsUser) return null;
 
     return IsUser;
   }
 
-  static async getLeaderboard(limit: number) {
+  static async getLeaderboard({ limit }: { limit: number }): Promise<any[]> {
     const users = await UserSchema.find({}).sort({ xp: -1 }).limit(limit);
     if (!users) throw new Error("The leaderboard is empty.");
     const array = [];
@@ -143,5 +191,28 @@ export default class XP {
       });
     }
     return array;
+  }
+
+  static async xpFor({
+    targetLevel,
+  }: {
+    targetLevel: number;
+  }): Promise<number> {
+    if (isNaN(targetLevel) || isNaN(parseInt(targetLevel.toString(), 10)))
+      throw new TypeError("Target level should be a valid number.");
+    if (targetLevel < 0)
+      throw new RangeError("Target level should be a positive number.");
+    return targetLevel * targetLevel * 100;
+  }
+
+  static async getRank({ id }: { id: User["id"] }): Promise<number> {
+    const users = await UserSchema.find({}).sort({ level: -1 });
+    if (!users) throw new Error("The leaderboard is empty.");
+    let rank = 0;
+    for (const user of users) {
+        rank++;
+        if (user.id === id) return rank;
+    }
+    return rank;
   }
 }

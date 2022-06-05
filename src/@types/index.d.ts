@@ -5,18 +5,21 @@ export type Events = "ready" | "messageCreate" | "messageUpdate" | "messageDelet
 interface SlashCommandOption {
   type: number;
   name: string;
-  description: string;
-  required: boolean;
+  description?: string;
+  required?: boolean;
+  options?: SlashCommandOption[];
 }
 
 interface SlashCommandData {
   name: string;
-  description: string;
-  options: SlashCommandOption[];
+  description?: string;
+  options?: SlashCommandOption[];
+  type?: number;
 }
 
 interface User {
   id: string;
+  name: string;
   xp: number | 0;
   level: number | 0;
 }

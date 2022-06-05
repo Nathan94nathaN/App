@@ -3,10 +3,12 @@ import { Message } from "discord.js";
 import Game from "../base/client";
 import XP from "../base/level";
 
+XP.setURL({ url: process.env.MONGO_URI });
+
 export const name: Event["name"] = "messageCreate";
 export const execute: Event["execute"] = async (
-  message: Message,
-  client: Game
+  client: Game,
+  message: Message
 ) => {
   if (message.author.bot) return;
   if (!client._ready) return;
@@ -49,18 +51,18 @@ export const execute: Event["execute"] = async (
 
   // xp
 
-  XP.setURL(process.env.MONGO_URI);
-  XP.getUser(message.author.id).then((user: User) => {
-    XP.generateRandomNumber(1, 35).then((number: number) => {
+  XP.getUser({ id: message.author.id }).then((user) => {
+    XP.generateRandomNumber(1, 35).then((number) => {
       if (!user) {
         XP.createUser({
           id: message.author.id,
+          name: message.author.username,
           xp: 0,
           level: 1,
         });
       }
       client.cooldowns.get(message.author.id) ??
-        XP.addXP(message.author.id, number).then(() => {
+        XP.addXP({ id: message.author.id, xp: number }).then(() => {
           client.cooldowns.set(message.author.id, {
             cooldown: true,
           });

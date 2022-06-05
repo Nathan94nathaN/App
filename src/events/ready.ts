@@ -40,7 +40,7 @@ export const execute: Event["execute"] = async (client: Game) => {
       process.env.HOUR_CHANNEL_ID
     ) as VoiceChannel;
     channel.setName(
-      `⏰ (UTC +1) ${new Date().getHours()}:${new Date().getMinutes()}`
+      `⏰ (UTC +1) ${new Date().getHours()}:${new Date().getMinutes() === 0 ? "00" : new Date().getMinutes()}`
     );
   });
 };
