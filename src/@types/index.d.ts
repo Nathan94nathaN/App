@@ -1,5 +1,6 @@
 export type SlashCommandCategory = "general" | "moderation" | "owner";
 export type LoggerLevel = "database" | "error" | "info" | "event" | "command";
+export type Events = "ready" | "messageCreate" | "messageUpdate" | "messageDelete" | "messageReactionAdd" | "messageReactionRemove" | "messageReactionRemoveAll" | "messageReactionRemoveEmoji" | "guildMemberAdd" | "guildMemberRemove" | "guildMemberUpdate" | "guildBanAdd" | "guildBanRemove" | "guildCreate" | "guildDelete" | "guildEmojisUpdate" | "guildIntegrationsUpdate" | "guildMemberChunk" | "guildMembersChunk" | "guildRoleCreate" | "guildRoleDelete" | "guildRoleUpdate" | "guildUpdate" | "guildRolePositionUpdate" | "guildEmojisUpdate" | "guildIntegrationsUpdate" | "guildMemberChunk" | "guildMembersChunk" | "guildRoleCreate" | "guildRoleDelete" | "guildRoleUpdate" | "guildUpdate" | "guildRolePositionUpdate" | "guildEmojisUpdate" | "guildIntegrationsUpdate" | "guildMemberChunk" | "guildMembersChunk" | "guildRoleCreate" | "guildRoleDelete" | "guildRoleUpdate" | "guildUpdate" | "guildRolePositionUpdate" | "guildEmojisUpdate" | "guildIntegrationsUpdate" | "guildMemberChunk" | "guildMembersChunk" | "guildRoleCreate" | "guildRoleDelete" | "guildRoleUpdate" | "guildUpdate" | "guildRolePositionUpdate" | "guildEmojisUpdate" | "guildIntegrationsUpdate" | "guildMemberChunk" | "guildMembersChunk" | "guildRoleCreate" | "guildRoleDelete" | "guildRoleUpdate" | "guildUpdate" | "guildRolePositionUpdate" | "guildEmojisUpdate" | "guildIntegrationsUpdate" | "guildMemberChunk" | "guildMembersChunk" | "guildRoleCreate" | "guildRoleDelete" | "guildRoleUpdate" | "guildUpdate";
 
 interface SlashCommandOption {
   type: number;
@@ -14,11 +15,17 @@ interface SlashCommandData {
   options: SlashCommandOption[];
 }
 
+interface User {
+  id: string;
+  xp: number | 0;
+  level: number | 0;
+}
+
 interface Event {
   /**
    * The name of the event.
    */
-  name: string;
+  name: Events | string;
   /**
    * If this event must be called only once.
    */

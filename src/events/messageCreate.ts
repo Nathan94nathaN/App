@@ -1,15 +1,20 @@
-import { Event } from "../@types/index";
+import { Event, User } from "../@types/index";
 import { Message } from "discord.js";
 import Game from "../base/client";
+import XP from "../base/level";
 
 export const name: Event["name"] = "messageCreate";
-export const execute = async (message: Message, client: Game) => {
+export const execute: Event["execute"] = async (
+  message: Message,
+  client: Game
+) => {
   if (message.author.bot) return;
-  const args = message.content.slice(1).split(/ +/);
-  const command = args.shift().toLowerCase();
-  if (!message.content.startsWith("!")) return;
-  if (command === "eval" && message.author.id === "853394858895343636") {
-    const content = args[0];
+  if (!client._ready) return;
+  if (
+    message.content.startsWith("!eval") &&
+    process.env.OWNERS.includes(message.author.id)
+  ) {
+    const content = message.content.split(" ").slice(1).join(" ");
     const result = new Promise((resolve) => resolve(eval(content)));
 
     return result
@@ -41,4 +46,28 @@ export const execute = async (message: Message, client: Game) => {
         }
       });
   }
+
+  // xp
+
+  XP.setURL(process.env.MONGO_URI);
+  XP.getUser(message.author.id).then((user: User) => {
+    XP.generateRandomNumber(1, 35).then((number: number) => {
+      if (!user) {
+        XP.createUser({
+          id: message.author.id,
+          xp: 0,
+          level: 1,
+        });
+      }
+      client.cooldowns.get(message.author.id) ??
+        XP.addXP(message.author.id, number).then(() => {
+          client.cooldowns.set(message.author.id, {
+            cooldown: true,
+          });
+          setTimeout(() => {
+            client.cooldowns.delete(message.author.id);
+          }, 1000 * 60);
+        });
+    });
+  });
 };

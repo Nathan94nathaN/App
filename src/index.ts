@@ -3,29 +3,20 @@ import { readdirSync } from "fs";
 import * as path from "path";
 import { config } from "dotenv";
 import { Event, SlashCommand } from "./@types";
-import { connect } from "mongoose";
 
 config();
-connect(process.env.MONGO_URI);
 
 const client = new Game({
   intents: 32767,
 });
 
-const events = readdirSync(path.resolve(`${__dirname}/events`)).filter(
-  (file) => {
-    return file.endsWith(".ts");
-  }
-);
+function setHandler(dir: string, cb: (exportation: any) => void): void {
+  readdirSync(path.resolve(__dirname, dir))
+    .filter((file) => file.endsWith(".ts"))
+    .forEach((file) => cb(require(path.resolve(__dirname, dir, file))));
+}
 
-const commands = readdirSync(path.resolve(`${__dirname}/commands`)).filter(
-  (file) => {
-    return file.endsWith(".ts");
-  }
-);
-
-for (const file of events) {
-  const event: Event = require(path.resolve(__dirname, "events", file));
+setHandler("events", (event: Event) => {
   if (event.name) {
     client.on(event.name, (...args) => event.execute(...args, client));
     client.log(
@@ -33,14 +24,9 @@ for (const file of events) {
       "event"
     );
   }
-}
+});
 
-for (const file of commands) {
-  const command: SlashCommand = require(path.resolve(
-    __dirname,
-    "commands",
-    file
-  ));
+setHandler("commands", (command: SlashCommand) => {
   if (command.name) {
     client.commands.set(command.name.toLowerCase(), command);
     client.log(
@@ -48,7 +34,7 @@ for (const file of commands) {
       "command"
     );
   }
-}
+});
 
 process
   .on("unhandledRejection", (err: Error) => {
