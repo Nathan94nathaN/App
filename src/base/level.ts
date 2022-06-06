@@ -67,14 +67,14 @@ export default class XP {
     id: User["id"];
     level: number;
   }): Promise<number> {
-    if (level < 0 || isNaN(level))
-      throw new TypeError("The level is not a number.");
+    if (level < 0 || isNaN(level) || level > 100)
+      throw new TypeError("The level is not a valid number.");
 
     const IsUser = await UserSchema.findOne({ id: id });
     if (!IsUser) return null;
 
     IsUser.level += parseInt(level.toString(), 10);
-    IsUser.xp += Math.floor(Math.PI * level * Math.sqrt(IsUser.level) * 100);
+    IsUser.xp = IsUser.level * IsUser.level * 100;
     await IsUser.save().catch((err: Error) => {
       throw err;
     });
@@ -110,7 +110,7 @@ export default class XP {
     id: User["id"];
     level: number;
   }): Promise<number> {
-    if (level < 0 || isNaN(level))
+    if (level < 0 || isNaN(level) || level > 100)
       throw new TypeError("The level is not a number.");
 
     const IsUser = await UserSchema.findOne({ id: id });
@@ -136,6 +136,13 @@ export default class XP {
     const IsUser = await UserSchema.findOne({ id: id });
     if (!IsUser) throw new Error("The user does not exist.");
 
+    if (
+      isNaN((IsUser.xp -= parseInt(xp.toString(), 10))) ||
+      isNaN((IsUser.level = Math.floor(0.1 * Math.sqrt(IsUser.xp))))
+    ) {
+      IsUser.xp = 0;
+      IsUser.level = 0;
+    }
     IsUser.xp -= parseInt(xp.toString(), 10);
     IsUser.level = Math.floor(0.1 * Math.sqrt(IsUser.xp));
     await IsUser.save().catch((err: Error) => {
@@ -158,7 +165,7 @@ export default class XP {
     const IsUser = await UserSchema.findOne({ id: id });
     if (!IsUser) throw new Error("The user does not exist.");
     IsUser.level -= parseInt(level.toString(), 10);
-    IsUser.xp -= Math.floor(Math.PI * level * Math.sqrt(IsUser.level) * 100);
+    IsUser.xp = IsUser.level * IsUser.level * 100;
     await IsUser.save().catch((err: Error) => {
       throw err;
     });
