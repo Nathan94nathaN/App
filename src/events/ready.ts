@@ -38,4 +38,6 @@ export const name: Event["name"] = "ready",
       category: "Tickets",
       role: "982419830785327134",
     });
+
+    manager.setModmail();
   };
