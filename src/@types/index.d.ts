@@ -1,6 +1,7 @@
+import { ClientEvents } from "discord.js";
+
 export type SlashCommandCategory = "general" | "moderation" | "owner";
 export type LoggerLevel = "database" | "error" | "info" | "event" | "command";
-export type Events = "ready" | "messageCreate" | "messageUpdate" | "messageDelete" | "messageReactionAdd" | "messageReactionRemove" | "messageReactionRemoveAll" | "messageReactionRemoveEmoji" | "guildMemberAdd" | "guildMemberRemove" | "guildMemberUpdate" | "guildBanAdd" | "guildBanRemove" | "guildCreate" | "guildDelete" | "guildEmojisUpdate" | "guildIntegrationsUpdate" | "guildMemberChunk" | "guildMembersChunk" | "guildRoleCreate" | "guildRoleDelete" | "guildRoleUpdate" | "guildUpdate" | "guildRolePositionUpdate" | "guildEmojisUpdate" | "guildIntegrationsUpdate" | "guildMemberChunk" | "guildMembersChunk" | "guildRoleCreate" | "guildRoleDelete" | "guildRoleUpdate" | "guildUpdate" | "guildRolePositionUpdate" | "guildEmojisUpdate" | "guildIntegrationsUpdate" | "guildMemberChunk" | "guildMembersChunk" | "guildRoleCreate" | "guildRoleDelete" | "guildRoleUpdate" | "guildUpdate" | "guildRolePositionUpdate" | "guildEmojisUpdate" | "guildIntegrationsUpdate" | "guildMemberChunk" | "guildMembersChunk" | "guildRoleCreate" | "guildRoleDelete" | "guildRoleUpdate" | "guildUpdate" | "guildRolePositionUpdate" | "guildEmojisUpdate" | "guildIntegrationsUpdate" | "guildMemberChunk" | "guildMembersChunk" | "guildRoleCreate" | "guildRoleDelete" | "guildRoleUpdate" | "guildUpdate" | "guildRolePositionUpdate" | "guildEmojisUpdate" | "guildIntegrationsUpdate" | "guildMemberChunk" | "guildMembersChunk" | "guildRoleCreate" | "guildRoleDelete" | "guildRoleUpdate" | "guildUpdate";
 
 interface SlashCommandOption {
   type: number;
@@ -28,7 +29,7 @@ interface Event {
   /**
    * The name of the event.
    */
-  name: Events | string;
+  name: keyof ClientEvents;
   /**
    * If this event must be called only once.
    */
@@ -71,6 +72,4 @@ interface SlashCommand {
   execute: (...args: any) => void;
 }
 
-interface UserModel {
-  save(): Promise<void>;
-}
+interface UserModel { save(): Promise<void>; }

@@ -6,43 +6,36 @@ import { Event, SlashCommand } from "./@types";
 
 config();
 
+<<<<<<< HEAD
 const client = new Game({
   intents: 32767,
   partials: ["MESSAGE", "REACTION", "CHANNEL"]
 });
+=======
+const client = new Game({ intents: 32767 });
+>>>>>>> aa581667194019d662e22199733595e6b60a409e
 
 function setHandler(dir: string, cb: (exportation: any) => void): void {
-  readdirSync(path.resolve(__dirname, dir))
-    .filter((file) => file.endsWith(".ts"))
-    .forEach((file) => cb(require(path.resolve(__dirname, dir, file))));
+  readdirSync(path.resolve(__dirname, dir)).filter(file => file.endsWith(".ts")).forEach(file => cb(require(path.resolve(__dirname, dir, file))));
 }
 
 setHandler("events", (event: Event) => {
   if (event.name) {
     client.on(event.name, (...args) => event.execute(client, ...args));
-    client.log(
-      `Loaded event ${event.name[0].toUpperCase() + event.name.slice(1)}`,
-      "event"
-    );
+    client.log(`Loaded event ${event.name[0].toUpperCase() + event.name.slice(1)}`, "event");
   }
 });
 
 setHandler("commands", (command: SlashCommand) => {
   if (command.name) {
     client.commands.set(command.name.toLowerCase(), command);
-    client.log(
-      `Loaded command ${command.name[0].toUpperCase() + command.name.slice(1)}`,
-      "command"
-    );
+    client.log(`Loaded command ${command.name[0].toUpperCase() + command.name.slice(1)}`, "command");
   }
 });
 
-process
-  .on("unhandledRejection", (err: Error) => {
-    client.log(err.stack, "error");
-  })
-  .on("uncaughtException", (err: Error) => {
-    client.log(err.stack, "error");
-    process.exit(1);
-  });
+process.on("unhandledRejection", (err: Error) => client.log(err.stack, "error")).on("uncaughtException", (err: Error) => {
+  client.log(err.stack, "error");
+  process.exit(1);
+});
+
 client.login(process.env.CLIENT_TOKEN);

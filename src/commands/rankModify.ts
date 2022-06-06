@@ -1,442 +1,252 @@
-import {
-  UserContextMenuInteraction,
-  MessageActionRow,
-  MessageButton,
-} from "discord.js";
+import { UserContextMenuInteraction } from "discord.js";
 import XP from "../base/level";
 import { SlashCommand } from "../@types/index";
 
-export const name: SlashCommand["name"] = "rankmodify";
-export const category: SlashCommand["category"] = "general";
-export const cooldown: SlashCommand["cooldown"] = 2;
-export const data: SlashCommand["data"] = {
-  name: "rankmodify",
-  type: 2,
-};
-
-export const execute: SlashCommand["execute"] = async (
-  int: UserContextMenuInteraction
-) => {
-  const member = int.guild.members.cache.get(int.targetId);
-  const id = UUID();
-  const uuid = `${id}`;
-  await int.deferReply();
-  await int
-    .editReply({
+export const name: SlashCommand["name"] = "rankmodify",
+  category: SlashCommand["category"] = "general",
+  cooldown: SlashCommand["cooldown"] = 2,
+  data: SlashCommand["data"] = { name: "rankmodify", type: 2 },
+  execute: SlashCommand["execute"] = async (int: UserContextMenuInteraction) => {
+    const member = int.guild.members.cache.get(int.targetId), id = Math.random().toString(36).replace(/[^a-z]+/g, "").slice(0, 5);
+    await int.deferReply();
+    await int.editReply({
       content: "What do you want to modify?",
-      components: [
-        new MessageActionRow().addComponents(
-          new MessageButton()
-            .setStyle("PRIMARY")
-            .setLabel("XP")
-            .setCustomId("xp"),
-          new MessageButton()
-            .setStyle('PRIMARY')
-            .setLabel("Level")
-            .setCustomId("level")
-        ),
-      ],
-    })
-    .then(async () => {
-      const collector = int.channel.createMessageComponentCollector({
-        filter: (m) => m.user.id === int.user.id,
-        time: 30000,
-        componentType: "BUTTON",
-      });
-      collector.on("collect", async (i) => {
+      components: [{
+        type: "ACTION_ROW",
+        components: [
+          { type: "BUTTON", style: "PRIMARY", label: "XP", customId: "xp" }, { type: "BUTTON", style: "PRIMARY", label: "Level", customId: "level" },
+        ]
+      }],
+    }).then(async () => {
+      const collector = int.channel.createMessageComponentCollector({ filter: m => m.user.id === int.user.id, time: 30000, componentType: "BUTTON" });
+      collector.on("collect", async i => {
         if (i.customId === "level") {
           await i.deferUpdate();
-          await i
-            .editReply({
-              content: "Do you want to add or remove Level?",
+          await i.editReply({
+            content: "Do you want to add or remove Level?",
+            components: [{
+              type: "ACTION_ROW",
               components: [
-                new MessageActionRow().addComponents(
-                  new MessageButton()
-                    .setStyle("SUCCESS")
-                    .setLabel("Add")
-                    .setCustomId("add_level"),
-                  new MessageButton()
-                    .setStyle("DANGER")
-                    .setLabel("Remove")
-                    .setCustomId("remove_level")
-                ),
-              ],
-            })
-            .then(async () => {
-              const collector = int.channel.createMessageComponentCollector({
-                filter: (m) => m.user.id === int.user.id,
-                time: 30000,
-                componentType: "BUTTON",
-              });
-              collector.on("collect", async (i) => {
-                if (i.customId === "add_level") {
-                  await i.deferUpdate();
-                  await i.editReply({
-                    content: "How much Levels do you want to add?",
-                    components: [],
-                  });
-                  i.channel
-                    .awaitMessages({
-                      filter: (m) => m.author.id === i.user.id,
-                      time: 30000,
-                      max: 1,
-                    })
-                    .then(async (ms) => {
-                      let level = parseInt(ms.first().content);
-                      if (isNaN(level)) return;
-                      await i.channel
-                        .send({
-                          content: `Are you sure you want to add ${level} Levels to ${member}?`,
-                          components: [
-                            new MessageActionRow().addComponents(
-                              new MessageButton()
-                                .setStyle("SUCCESS")
-                                .setLabel("Yes")
-                                .setCustomId(`yes_${uuid}`),
-                              new MessageButton()
-                                .setStyle("DANGER")
-                                .setLabel("No")
-                                .setCustomId(`no_${uuid}`)
-                            ),
-                          ],
-                        })
-                        .then(async (msg) => {
-                          const collector =
-                            int.channel.createMessageComponentCollector({
-                              filter: (m) => m.user.id === int.user.id,
-                              time: 30000,
-                              componentType: "BUTTON",
-                            });
-                          collector.on("collect", async (i) => {
-                            if (i.customId === `yes_${uuid}`) {
-                              await i.deferUpdate();
-                              await XP.AddLevel({
-                                id: member.id,
-                                level,
-                              }).then(async () => {
-                                await msg.edit({
-                                  content: `Added ${level} Levels to ${member}!`,
-                                  components: [
-                                    new MessageActionRow().addComponents(
-                                      new MessageButton()
-                                        .setStyle("SUCCESS")
-                                        .setLabel("Yes")
-                                        .setCustomId(`yes_${uuid}`)
-                                        .setDisabled(true),
-                                      new MessageButton()
-                                        .setStyle("DANGER")
-                                        .setLabel("No")
-                                        .setCustomId(`no_${uuid}`)
-                                        .setDisabled(true)
-                                    ),
-                                  ],
-                                });
-                              });
-                            } else if (i.customId === `no_${uuid}`) {
-                              await i.deferUpdate();
-                              await msg.edit({
-                                content: "Cancelled!",
-                                components: [
-                                  new MessageActionRow().addComponents(
-                                    new MessageButton()
-                                      .setStyle("SUCCESS")
-                                      .setLabel("Yes")
-                                      .setCustomId(`yes_${uuid}`)
-                                      .setDisabled(true),
-                                    new MessageButton()
-                                      .setStyle("DANGER")
-                                      .setLabel("No")
-                                      .setCustomId(`no_${uuid}`)
-                                      .setDisabled(true)
-                                  ),
-                                ],
-                              });
-                            }
-                          });
-                        });
+                { type: "BUTTON", style: "SUCCESS", label: "Add", customId: "add_level" },
+                { type: "BUTTON", style: "DANGER", label: "Remove", customId: "remove_level" },
+              ]
+            }],
+          }).then(async () => {
+            const collector = int.channel.createMessageComponentCollector({ filter: (m) => m.user.id === int.user.id, time: 30000, componentType: "BUTTON" });
+            collector.on("collect", async i => {
+              if (i.customId === "add_level") {
+                await i.deferUpdate();
+                await i.editReply({ content: "How much Levels do you want to add?", components: [] });
+                i.channel.awaitMessages({ filter: m => m.author.id === i.user.id, time: 30000, max: 1 }).then(async (ms) => {
+                  let level = parseInt(ms.first().content);
+                  if (isNaN(level)) return;
+                  await i.channel.send({
+                    content: `Are you sure you want to add ${level} Levels to ${member}?`,
+                    components: [{
+                      type: "ACTION_ROW",
+                      components: [
+                        { type: "BUTTON", style: "SUCCESS", label: "Yes", customId: `yes_${id}` },
+                        { type: "BUTTON", style: "DANGER", label: "no", customId: `no_${id}` },
+                      ]
+                    }],
+                  }).then(async msg => {
+                    const collector = int.channel.createMessageComponentCollector({
+                      filter: m => m.user.id === int.user.id, time: 30000, componentType: "BUTTON",
                     });
+                    collector.on("collect", async i => {
+                      if (i.customId === `yes_${id}`) {
+                        await i.deferUpdate();
+                        await XP.AddLevel(member.id, level).then(async () => await msg.edit({
+                          content: `Added ${level} Levels to ${member}!`,
+                          components: [{
+                            type: "ACTION_ROW",
+                            components: [
+                              { type: "BUTTON", style: "SUCCESS", label: "Yes", customId: `yes_${id}`, disabled: true },
+                              { type: "BUTTON", style: "DANGER", label: "No", customId: `no_${id}`, disabled: true },
+                            ]
+                          }],
+                        }));
+                      } else if (i.customId === `no_${id}`) {
+                        await i.deferUpdate();
+                        await msg.edit({
+                          content: "Cancelled!",
+                          components: [{
+                            type: "ACTION_ROW",
+                            components: [
+                              { type: "BUTTON", style: "SUCCESS", label: "Yes", customId: `yes_${id}`, disabled: true },
+                              { type: "BUTTON", style: "DANGER", label: "No", customId: `no_${id}`, disabled: true },
+                            ]
+                          }],
+                        });
+                      }
+                    });
+                  });
+                });
                 } else if (i.customId === "remove_level") {
                   await i.deferUpdate();
-                  await i.editReply({
-                    content: "How much Levels do you want to remove?",
-                    components: [],
-                  });
+                  await i.editReply({ content: "How much Levels do you want to remove?", components: [] });
 
-                  i.channel
-                    .awaitMessages({
-                      filter: (m) => m.author.id === i.user.id,
-                      time: 30000,
-                      max: 1,
-                    })
-                    .then(async (ms) => {
-                      let level = parseInt(ms.first().content);
-                      if (isNaN(level)) return;
-                      await i.channel
-                        .send({
-                          content: `Are you sure you want to remove ${level} Levels to ${member}?`,
-                          components: [
-                            new MessageActionRow().addComponents(
-                              new MessageButton()
-                                .setStyle("SUCCESS")
-                                .setLabel("Yes")
-                                .setCustomId(`yes_${uuid}`),
-                              new MessageButton()
-                                .setStyle("DANGER")
-                                .setLabel("No")
-                                .setCustomId(`no_${uuid}`)
-                            ),
-                          ],
-                        })
-                        .then(async (msg) => {
-                          const collector =
-                            int.channel.createMessageComponentCollector({
-                              filter: (m) => m.user.id === int.user.id,
-                              time: 30000,
-                              componentType: "BUTTON",
-                            });
-                          collector.on("collect", async (i) => {
-                            if (i.customId === `yes_${uuid}`) {
-                              await i.deferUpdate();
-                              await XP.subtractLevel({
-                                id: member.id,
-                                level,
-                              }).then(async () => {
-                                await msg.edit({
-                                  content: `Removed ${level} level from ${member}!`,
-                                  components: [
-                                    new MessageActionRow().addComponents(
-                                      new MessageButton()
-                                        .setStyle("SUCCESS")
-                                        .setLabel("Yes")
-                                        .setCustomId(`yes_${uuid}`)
-                                        .setDisabled(true),
-                                      new MessageButton()
-                                        .setStyle("DANGER")
-                                        .setLabel("No")
-                                        .setCustomId(`no_${uuid}`)
-                                        .setDisabled(true)
-                                    ),
-                                  ],
-                                });
-                              });
-                            } else if (i.customId === `no_${uuid}`) {
-                              await i.deferUpdate();
-                              await msg.edit({
-                                content: "Cancelled!",
+                  i.channel.awaitMessages({ filter: (m) => m.author.id === i.user.id, time: 30000, max: 1 }).then(async (ms) => {
+                    let level = parseInt(ms.first().content);
+                    if (isNaN(level)) return;
+                    await i.channel.send({
+                      content: `Are you sure you want to remove ${level} Levels to ${member}?`,
+                      components: [{
+                        type: "ACTION_ROW",
+                        components: [
+                          { type: "BUTTON", style: "SUCCESS", label: "Yes", customId: `yes_${id}` },
+                          { type: "BUTTON", style: "DANGER", label: "No", customId: `no_${id}` },
+                        ]
+                      }],
+                    }).then(async (msg) => {
+                      const collector = int.channel.createMessageComponentCollector({
+                        filter: (m) => m.user.id === int.user.id, time: 30000, componentType: "BUTTON",
+                      });
+                      collector.on("collect", async (i) => {
+                        if (i.customId === `yes_${id}`) {
+                          await i.deferUpdate();
+                          await XP.subtractLevel(member.id, level).then(async () => {
+                            await msg.edit({
+                              content: `Removed ${level} level from ${member}!`,
+                              components: [{
+                                type: "ACTION_ROW",
                                 components: [
-                                  new MessageActionRow().addComponents(
-                                    new MessageButton()
-                                      .setStyle("SUCCESS")
-                                      .setLabel("Yes")
-                                      .setCustomId(`yes_${uuid}`)
-                                      .setDisabled(true),
-                                    new MessageButton()
-                                      .setStyle("DANGER")
-                                      .setLabel("No")
-                                      .setCustomId(`no_${uuid}`)
-                                      .setDisabled(true)
-                                  ),
-                                ],
-                              });
-                            }
+                                  { type: "BUTTON", style: "SUCCESS", label: "Yes", customId: `yes_${id}`, disabled: true },
+                                  { type: "BUTTON", style: "DANGER", label: "No", customId: `no_${id}`, disabled: true },
+                                ]
+                              }],
+                            });
                           });
-                        });
+                        } else if (i.customId === `no_${id}`) {
+                          await i.deferUpdate();
+                          await msg.edit({
+                            content: "Cancelled!",
+                            components: [{
+                              type: "ACTION_ROW",
+                              components: [
+                                { type: "BUTTON", style: "SUCCESS", label: "Yes", customId: `yes_${id}`, disabled: true },
+                                { type: "BUTTON", style: "DANGER", label: "No", customId: `no_${id}`, disabled: true },
+                              ]
+                            }],
+                          });
+                        }
+                      });
                     });
+                  });
                 }
               });
             });
         } else if (i.customId === "xp") {
           await i.deferUpdate();
-          await i
-            .editReply({
-              content: "Do you want to add or remove XP?",
-              components: [
-                new MessageActionRow().addComponents(
-                  new MessageButton()
-                    .setStyle("SUCCESS")
-                    .setLabel("Add")
-                    .setCustomId("add_xp"),
-                  new MessageButton()
-                    .setStyle("DANGER")
-                    .setLabel("Remove")
-                    .setCustomId("remove_xp")
-                ),
-              ],
-            })
-            .then(async () => {
-              const collector = int.channel.createMessageComponentCollector({
-                filter: (m) => m.user.id === int.user.id,
-                time: 30000,
-                componentType: "BUTTON",
-              });
-              collector.on("collect", async (i) => {
-                if (i.customId === "add_xp") {
-                  await i.deferUpdate();
-                  await i.editReply({
-                    content: "How much XP do you want to add?",
-                    components: [],
+        await i.editReply({
+          content: "Do you want to add or remove XP?",
+          components: [{
+            type: "ACTION_ROW",
+            components: [
+              { type: "BUTTON", style: "SUCCESS", label: "Add", customId: `add_xp` },
+              { type: "BUTTON", style: "DANGER", label: "Remove", customId: `remove_xp` },
+            ]
+          }],
+        }).then(async () => {
+          const collector = int.channel.createMessageComponentCollector({ filter: (m) => m.user.id === int.user.id, time: 30000, componentType: "BUTTON" });
+          collector.on("collect", async (i) => {
+            if (i.customId === "add_xp") {
+              await i.deferUpdate();
+              await i.editReply({ content: "How much XP do you want to add?", components: [] });
+              i.channel.awaitMessages({ filter: (m) => m.author.id === i.user.id, time: 30000, max: 1 }).then(async (ms) => {
+                let xp = parseInt(ms.first().content);
+                if (isNaN(xp)) return;
+                await i.channel.send({
+                  content: `Are you sure you want to add ${xp} XP to ${member}?`,
+                  components: [{
+                    type: "ACTION_ROW",
+                    components: [
+                      { type: "BUTTON", style: "SUCCESS", label: "Yes", customId: `yes_${id}` },
+                      { type: "BUTTON", style: "DANGER", label: "No", customId: `no_${id}` },
+                    ]
+                  }],
+                })
+                .then(async (msg) => {
+                  const collector = int.channel.createMessageComponentCollector({
+                    filter: (m) => m.user.id === int.user.id, time: 30000, componentType: "BUTTON",
                   });
-                  i.channel
-                    .awaitMessages({
-                      filter: (m) => m.author.id === i.user.id,
-                      time: 30000,
-                      max: 1,
-                    })
-                    .then(async (ms) => {
-                      let xp = parseInt(ms.first().content);
-                      if (isNaN(xp)) return;
-                      await i.channel
-                        .send({
-                          content: `Are you sure you want to add ${xp} XP to ${member}?`,
+                  collector.on("collect", async (i) => {
+                    if (i.customId === `yes_${id}`) {
+                      await i.deferUpdate();
+                      await XP.addXP(member.id, xp).then(async () => await msg.edit(`Added ${xp} XP to ${member}!`));
+                    } else if (i.customId === `no_${id}`) {
+                      await msg.edit({
+                        content: "Cancelled!",
+                        components: [{
+                          type: "ACTION_ROW",
                           components: [
-                            new MessageActionRow().addComponents(
-                              new MessageButton()
-                                .setStyle("SUCCESS")
-                                .setLabel("Yes")
-                                .setCustomId(`yes_${uuid}`),
-                              new MessageButton()
-                                .setStyle("DANGER")
-                                .setLabel("No")
-                                .setCustomId(`no_${uuid}`)
-                            ),
-                          ],
-                        })
-                        .then(async (msg) => {
-                          const collector =
-                            int.channel.createMessageComponentCollector({
-                              filter: (m) => m.user.id === int.user.id,
-                              time: 30000,
-                              componentType: "BUTTON",
-                            });
-                          collector.on("collect", async (i) => {
-                            if (i.customId === `yes_${uuid}`) {
-                              await i.deferUpdate();
-                              await XP.addXP({
-                                id: member.id,
-                                xp,
-                              }).then(async () => {
-                                await msg.edit(`Added ${xp} XP to ${member}!`);
-                              });
-                            } else if (i.customId === `no_${uuid}`) {
-                              await msg.edit({
-                                content: "Cancelled!",
-                                components: [
-                                  new MessageActionRow().addComponents(
-                                    new MessageButton()
-                                      .setStyle("SUCCESS")
-                                      .setLabel("Yes")
-                                      .setCustomId(`yes_${uuid}`)
-                                      .setDisabled(true),
-                                    new MessageButton()
-                                      .setStyle("DANGER")
-                                      .setLabel("No")
-                                      .setCustomId(`no_${uuid}`)
-                                      .setDisabled(true)
-                                  ),
-                                ],
-                              });
-                            }
-                          });
-                        });
-                    });
-                } else if (i.customId === "remove_xp") {
-                  await i.deferUpdate();
-                  await i.editReply({
-                    content: "How much XP do you want to remove?",
-                    components: [],
+                            { type: "BUTTON", style: "SUCCESS", label: "Yes", customId: `yes_${id}`, disabled: true },
+                            { type: "BUTTON", style: "DANGER", label: "No", customId: `no_${id}`, disabled: true },
+                          ]
+                        }],
+                      });
+                    }
                   });
+                });
+              });
+            } else if (i.customId === "remove_xp") {
+              await i.deferUpdate();
+              await i.editReply({ content: "How much XP do you want to remove?", components: [] });
 
-                  i.channel
-                    .awaitMessages({
-                      filter: (m) => m.author.id === i.user.id,
-                      time: 30000,
-                      max: 1,
-                    })
-                    .then(async (ms) => {
-                      let xp = parseInt(ms.first().content);
-                      if (isNaN(xp)) return;
-                      await i.channel
-                        .send({
-                          content: `Are you sure you want to remove ${xp} XP to ${member}?`,
-                          components: [
-                            new MessageActionRow().addComponents(
-                              new MessageButton()
-                                .setStyle("SUCCESS")
-                                .setLabel("Yes")
-                                .setCustomId(`yes_${uuid}`),
-                              new MessageButton()
-                                .setStyle("DANGER")
-                                .setLabel("No")
-                                .setCustomId(`no_${uuid}`)
-                            ),
-                          ],
-                        })
-                        .then(async (msg) => {
-                          const collector =
-                            int.channel.createMessageComponentCollector({
-                              filter: (m) => m.user.id === int.user.id,
-                              time: 30000,
-                              componentType: "BUTTON",
-                            });
-                          collector.on("collect", async (i) => {
-                            if (i.customId === `yes_${uuid}`) {
-                              await i.deferUpdate();
-                              await XP.subtractXP({
-                                id: member.id,
-                                xp,
-                              }).then(async () => {
-                                await msg.edit({
-                                  content: `Removed ${xp} XP from ${member}!`,
-                                  components: [
-                                    new MessageActionRow().addComponents(
-                                      new MessageButton()
-                                        .setStyle("SUCCESS")
-                                        .setLabel("Yes")
-                                        .setCustomId(`yes_${uuid}`)
-                                        .setDisabled(true),
-                                      new MessageButton()
-                                        .setStyle("DANGER")
-                                        .setLabel("No")
-                                        .setCustomId(`no_${uuid}`)
-                                        .setDisabled(true)
-                                    ),
-                                  ],
-                                });
-                              });
-                            } else if (i.customId === `no_${uuid}`) {
-                              await i.deferUpdate();
-                              await msg.edit({
-                                content: "Cancelled!",
-                                components: [
-                                  new MessageActionRow().addComponents(
-                                    new MessageButton()
-                                      .setStyle("SUCCESS")
-                                      .setLabel("Yes")
-                                      .setCustomId(`yes_${uuid}`)
-                                      .setDisabled(true),
-                                    new MessageButton()
-                                      .setStyle("DANGER")
-                                      .setLabel("No")
-                                      .setCustomId(`no_${uuid}`)
-                                      .setDisabled(true)
-                                  ),
-                                ],
-                              });
-                            }
+              i.channel.awaitMessages({ filter: (m) => m.author.id === i.user.id, time: 30000, max: 1 }).then(async (ms) => {
+                let xp = parseInt(ms.first().content);
+                if (isNaN(xp)) return;
+                await i.channel
+                .send({
+                  content: `Are you sure you want to remove ${xp} XP to ${member}?`,
+                  components: [{
+                    type: "ACTION_ROW",
+                    components: [
+                      { type: "BUTTON", style: "SUCCESS", label: "Yes", customId: `yes_${id}` },
+                      { type: "BUTTON", style: "DANGER", label: "No", customId: `no_${id}` },
+                    ]
+                  }],
+                })
+                .then(async (msg) => {
+                  const collector =
+                  int.channel.createMessageComponentCollector({
+                    filter: (m) => m.user.id === int.user.id, time: 30000, componentType: "BUTTON",
+                  });
+                  collector.on("collect", async (i) => {
+                    if (i.customId === `yes_${id}`) {
+                        await i.deferUpdate();
+                        await XP.subtractXP(member.id, xp).then(async () => {
+                          await msg.edit({
+                            content: `Removed ${xp} XP from ${member}!`,
+                            components: [{
+                              type: "ACTION_ROW",
+                              components: [
+                                { type: "BUTTON", style: "SUCCESS", label: "Yes", customId: `yes_${id}`, disabled: true },
+                                { type: "BUTTON", style: "DANGER", label: "No", customId: `no_${id}`, disabled: true },
+                              ]
+                            }],
                           });
                         });
+                      } else if (i.customId === `no_${id}`) {
+                        await i.deferUpdate();
+                        await msg.edit({
+                          content: "Cancelled!",
+                          components: [{
+                            type: "ACTION_ROW",
+                            components: [
+                              { type: "BUTTON", style: "SUCCESS", label: "Yes", customId: `yes_${id}`, disabled: true },
+                              { type: "BUTTON", style: "DANGER", label: "No", customId: `no_${id}`, disabled: true },
+                            ]
+                          }],
+                        });
+                      }
                     });
-                }
-              });
+                  });
+                });
+              }
             });
+          });
         }
       });
     });
-};
-
-function UUID() {
-  return Math.random()
-    .toString(36)
-    .replace(/[^a-z]+/g, "")
-    .substr(0, 5);
-}
+  };
