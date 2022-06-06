@@ -9,7 +9,7 @@ export const execute: Event["execute"] = async (
   if (interaction.isContextMenu() || interaction.isCommand()) {
     if (interaction.user.bot) return;
     if (!client._ready)
-      return interaction.reply({
+      return await interaction.reply({
         content:
           "The bot is still loading, please wait a few seconds and try again.",
       });
