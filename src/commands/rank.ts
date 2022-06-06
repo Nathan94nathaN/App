@@ -25,7 +25,7 @@ export const execute: SlashCommand["execute"] = async (
   await int.deferReply();
   const opt = int.options.getUser("user") || int.user;
   XP.getUser({ id: opt.id }).then(async (user) => {
-    XP.xpFor({ targetLevel: user.level + 1 }).then(async (xp) => {
+    XP.xpFor({ targetLevel: user?.level + 1 ?? 1 }).then(async (xp) => {
       XP.getRank({ id: user.id }).then(async (rank) => {
         const canvas = createCanvas(1040, 330);
         const ctx = canvas.getContext("2d");

@@ -1,10 +1,10 @@
-import type { SlashCommand } from "../@types/index";
 import {
   UserContextMenuInteraction,
-  MessageButton,
   MessageActionRow,
+  MessageButton,
 } from "discord.js";
 import XP from "../base/level";
+import { SlashCommand } from "../@types/index";
 
 export const name: SlashCommand["name"] = "rankmodify";
 export const category: SlashCommand["category"] = "general";
@@ -28,12 +28,12 @@ export const execute: SlashCommand["execute"] = async (
         new MessageActionRow().addComponents(
           new MessageButton()
             .setStyle("PRIMARY")
-            .setLabel("Level")
-            .setCustomId("level"),
-          new MessageButton()
-            .setStyle("PRIMARY")
             .setLabel("XP")
-            .setCustomId("xp")
+            .setCustomId("xp"),
+          new MessageButton()
+            .setStyle("DANGER")
+            .setLabel("Cancel")
+            .setCustomId("cancel")
         ),
       ],
     })
