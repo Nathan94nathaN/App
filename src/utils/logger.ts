@@ -7,7 +7,7 @@ export default function logger(message: string, type?: LoggerLevel) {
       console.log(chalk.blue(`[${type.toUpperCase()}] ${message}`));
       break;
     case "error":
-      console.log(chalk.red(`[${type.toUpperCase()}] ${message}`));
+      console.log(`[${type.toUpperCase()}] ${message}`);
       break;
     case "info":
       console.log(chalk.green(`[${type.toUpperCase()}] ${message}`));
