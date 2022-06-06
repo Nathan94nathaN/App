@@ -6,14 +6,10 @@ import { Event, SlashCommand } from "./@types";
 
 config();
 
-<<<<<<< HEAD
 const client = new Game({
   intents: 32767,
   partials: ["MESSAGE", "REACTION", "CHANNEL"]
 });
-=======
-const client = new Game({ intents: 32767 });
->>>>>>> aa581667194019d662e22199733595e6b60a409e
 
 function setHandler(dir: string, cb: (exportation: any) => void): void {
   readdirSync(path.resolve(__dirname, dir)).filter(file => file.endsWith(".ts")).forEach(file => cb(require(path.resolve(__dirname, dir, file))));
