@@ -173,7 +173,16 @@ export const name: SlashCommand["name"] = "rankmodify",
                   collector.on("collect", async (i) => {
                     if (i.customId === `yes_${id}`) {
                       await i.deferUpdate();
-                      await XP.addXP(member.id, xp).then(async () => await msg.edit(`Added ${xp} XP to ${member}!`));
+                      await XP.addXP(member.id, xp).then(async () => await msg.edit({
+                          content: `Added ${xp} XP to ${member}!`,
+                          components: [{
+                            type: "ACTION_ROW",
+                            components: [
+                              { type: "BUTTON", style: "SUCCESS", label: "Yes", customId: `yes_${id}` },
+                              { type: "BUTTON", style: "DANGER", label: "No", customId: `no_${id}` },
+                            ]
+                          }],
+                        }));
                     } else if (i.customId === `no_${id}`) {
                       await msg.edit({
                         content: "Cancelled!",
