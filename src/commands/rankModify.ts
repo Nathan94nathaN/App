@@ -31,9 +31,9 @@ export const execute: SlashCommand["execute"] = async (
             .setLabel("XP")
             .setCustomId("xp"),
           new MessageButton()
-            .setStyle("DANGER")
-            .setLabel("Cancel")
-            .setCustomId("cancel")
+            .setStyle('PRIMARY')
+            .setLabel("Level")
+            .setCustomId("level")
         ),
       ],
     })

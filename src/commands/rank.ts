@@ -25,7 +25,7 @@ export const execute: SlashCommand["execute"] = async (
   await int.deferReply();
   const opt = int.options.getUser("user") || int.user;
   XP.getUser({ id: opt.id }).then(async (user) => {
-    XP.xpFor({ targetLevel: user?.level + 1 ?? 1 }).then(async (xp) => {
+    XP.xpFor({ targetLevel: user?.level + 1 ?? 1 }).then(async (xp: any) => {
       XP.getRank({ id: user.id }).then(async (rank) => {
         const canvas = createCanvas(1040, 330);
         const ctx = canvas.getContext("2d");
@@ -84,7 +84,13 @@ export const execute: SlashCommand["execute"] = async (
         ctx.font = "30px Arial";
         ctx.fillStyle = "#ffffff";
         ctx.textAlign = "center";
-        ctx.fillText(`${user.xp ? user.xp : 0} ‎/‎ ${xp}`, 900, 190);
+        ctx.fillText(
+          `${kFormatter(user.xp) ? kFormatter(user.xp) : 0} ‎/‎ ${kFormatter(
+            xp
+          )}`,
+          900,
+          190
+        );
 
         // progress bar
         roundRect(ctx, 300, 210, 661, 40, 20, "#484b4e", true);
@@ -92,7 +98,7 @@ export const execute: SlashCommand["execute"] = async (
           ctx,
           300,
           210,
-          (85 / xp) * user.xp * 7.7,
+          (85 / xp) * (user.xp === 0 ? (user.xp = 5) : user.xp) * 7.7,
           40,
           20,
           "#e74fb4",
@@ -168,3 +174,9 @@ function roundRect(
     ctx.fill();
   }
 }
+
+const kFormatter = (num: number) => {
+  return Math.abs(num) > 999
+    ? Math.sign(num) * Number((Math.abs(num) / 1000).toFixed(1)) + "k"
+    : Math.sign(num) * Math.abs(num);
+};

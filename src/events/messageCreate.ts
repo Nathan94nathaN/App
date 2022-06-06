@@ -57,7 +57,7 @@ export const execute: Event["execute"] = async (
         XP.createUser({
           id: message.author.id,
           name: message.author.username,
-          xp: 0,
+          xp: 5,
           level: 1,
         });
       }
