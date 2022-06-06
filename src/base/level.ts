@@ -74,6 +74,7 @@ export default class XP {
     if (!IsUser) return null;
 
     IsUser.level += parseInt(level.toString(), 10);
+    IsUser.xp += Math.floor(Math.PI * level * Math.sqrt(IsUser.level) * 100);
     await IsUser.save().catch((err: Error) => {
       throw err;
     });
@@ -156,8 +157,8 @@ export default class XP {
 
     const IsUser = await UserSchema.findOne({ id: id });
     if (!IsUser) throw new Error("The user does not exist.");
-
     IsUser.level -= parseInt(level.toString(), 10);
+    IsUser.xp -= Math.floor(Math.PI * level * Math.sqrt(IsUser.level) * 100);
     await IsUser.save().catch((err: Error) => {
       throw err;
     });
@@ -210,8 +211,8 @@ export default class XP {
     if (!users) throw new Error("The leaderboard is empty.");
     let rank = 0;
     for (const user of users) {
-        rank++;
-        if (user.id === id) return rank;
+      rank++;
+      if (user.id === id) return rank;
     }
     return rank;
   }
