@@ -1,4 +1,4 @@
-import { Event, User } from "../@types/index";
+import { Event } from "../@types/index";
 import { Message } from "discord.js";
 import Game from "../base/client";
 import XP from "../base/level";

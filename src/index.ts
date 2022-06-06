@@ -8,6 +8,7 @@ config();
 
 const client = new Game({
   intents: 32767,
+  partials: ["MESSAGE", "REACTION", "CHANNEL"]
 });
 
 function setHandler(dir: string, cb: (exportation: any) => void): void {

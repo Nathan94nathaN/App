@@ -2,6 +2,7 @@ import Game from "../base/client";
 import { Event, SlashCommand } from "../@types/index";
 import { Routes } from "discord-api-types/v9";
 import { VoiceChannel } from "discord.js";
+import { Manager } from 'modmail.djs';
 
 export const name: Event["name"] = "ready";
 function runEveryFullHour(callbackFn: () => void): void {
@@ -43,4 +44,13 @@ export const execute: Event["execute"] = async (client: Game) => {
       `⏰ (UTC +1) ${new Date().getHours()}:${new Date().getMinutes() === 0 ? "00" : new Date().getMinutes()}`
     );
   });
+
+  const manager = new Manager(client, {
+    guild: process.env.DEV_GUILD_ID,
+    category: 'Tickets',
+    prefix: '!',
+    role: '982419830785327134'
+  })
+
+  manager.setModmail();
 };
