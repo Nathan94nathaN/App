@@ -1,9 +1,10 @@
-import { ClientEvents } from "discord.js";
+import { ClientEvents, CommandInteraction, ContextMenuInteraction, UserContextMenuInteraction } from "discord.js"
+import Game from "../base/client";
 
 export type SlashCommandCategory = "general" | "moderation" | "owner";
 export type LoggerLevel = "database" | "error" | "info" | "event" | "command";
 
-interface SlashCommandOption {
+export interface SlashCommandOption {
   type: number;
   name: string;
   description?: string;
@@ -11,21 +12,21 @@ interface SlashCommandOption {
   options?: SlashCommandOption[];
 }
 
-interface SlashCommandData {
+export interface SlashCommandData {
   name: string;
   description?: string;
   options?: SlashCommandOption[];
   type?: number;
 }
 
-interface User {
+export interface User {
   id: string;
   name: string;
-  xp: number | 0;
-  level: number | 0;
+  xp: number;
+  level: number;
 }
 
-interface Event {
+export interface Event {
   /**
    * The name of the event.
    */
@@ -37,10 +38,11 @@ interface Event {
   /**
    * The function that will be called when the event is triggered.
    */
+  // eslint-disable-next-line no-unused-vars
   execute: (...args: any) => void;
 }
 
-interface SlashCommand {
+export interface SlashCommand {
   /**
    * The name of the command.
    */
@@ -67,9 +69,10 @@ interface SlashCommand {
   data: SlashCommandData;
   /**
    * This is the function that will be called when the command is executed.
-   * @param Interaction The CommandInteraction object from the interactionCreate event.
+   * @param interaction The CommandInteraction object from the interactionCreate event.
    */
-  execute: (...args: any) => void;
+  // eslint-disable-next-line no-unused-vars
+  execute<Interaction extends ContextMenuInteraction | CommandInteraction | UserContextMenuInteraction>(interaction: Interaction, client?: Game): void;
 }
 
-interface UserModel { save(): Promise<void>; }
+export interface UserModel { save(): Promise<void>; }
