@@ -1,7 +1,6 @@
 import { Event } from "../@types/index";
 import { Message } from "discord.js";
 import Game from "../base/client";
-import XP from "../base/level";
 import { inspect } from "util";
 
 export const name: Event["name"] = "messageCreate",
@@ -23,9 +22,9 @@ export const name: Event["name"] = "messageCreate",
 
     // xp
 
-    client.xp.getUser(message.author.id).then(user => XP.generateRandomNumber(1, 35).then(number => {
-      if (!user) client.xp.createUser(message.author.id);
-      client.cooldowns.get(message.author.id) ?? client.xp.addXP(message.author.id, number).then(() => {
+    client.xp.getUser({ userId: message.author.id }).then(user => client.xp.generateRandomNumber({ min: 1, max: 35 }).then(number => {
+      if (!user) client.xp.createUser({ userId: message.author.id });
+      client.cooldowns.get(message.author.id) ?? client.xp.addXP({ userId: message.author.id, xp: number }).then(() => {
         client.cooldowns.set(message.author.id, { cooldown: true });
         setTimeout(() => client.cooldowns.delete(message.author.id), 60000);
       });

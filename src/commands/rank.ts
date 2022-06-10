@@ -1,7 +1,6 @@
 import type { SlashCommand } from "../@types/index";
 import { CommandInteraction, ContextMenuInteraction } from "discord.js";
 import { CanvasRenderingContext2D, createCanvas, loadImage } from "canvas";
-import XP from "../base/level";
 import Game from "../base/client";
 
 function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, radius: number, fill: string, stroke = false) {
@@ -47,10 +46,10 @@ export const name: SlashCommand["name"] = "rank",
     await interaction.deferReply();
     if (interaction.options.getUser("user")?.bot) return interaction.reply({ content: "Bots have no rank" });
     const interactionUser = interaction.options.getUser("user") || interaction.user
-    const user = await client.xp.getUser(interactionUser.id);
+    const user = await client.xp.getUser({ userId: interactionUser.id });
     if (!user) return interaction.reply({ content: "This user have no rank" });
-    const xp = XP.xpFor(user["level"] + 1)
-    return client.xp.getRank(user["id"]).then(async rank => {
+    const xp = client.xp.xpFor({ targetLevel: user["level"] + 1 })
+    return client.xp.getRank({ userId: user["id"] }).then(async rank => {
       const canvas = createCanvas(1040, 330), ctx = canvas.getContext("2d");
       ctx.beginPath();
       const img = await loadImage(
