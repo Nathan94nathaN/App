@@ -3,10 +3,7 @@ import { Client, Collection, ClientOptions } from "discord.js";
 import { Collection as MongoCollection } from "mongodb";
 import { REST } from "@discordjs/rest";
 import { Cooldown, CustomUser, LoggerLevel, SlashCommand } from "../@types";
-import { connect, ClientSessionRequestOptions } from "http2"
 import XP from "./level";
-
-const session = connect("https://nodejs.org/");
 
 enum LoggerColors {
   /* eslint-disable no-unused-vars */
@@ -123,10 +120,5 @@ export default class Game extends Client {
 
   log(message: string, type?: LoggerLevel): void {
     console.log(this.colors[type ? LoggerColors[type] : "white"](`[${type?.toUpperCase() || "NONE"}] ${message}`))
-  }
-
-  request(path: string, options?: ClientSessionRequestOptions): Promise<any> {
-    let data = ""
-    return new Promise(resolve => { session.request({ ":path": path }, options).end().on("data", chunk => data += chunk).on("end", () => resolve(data)) })
   }
 }

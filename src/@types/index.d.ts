@@ -20,12 +20,8 @@ export interface SlashCommandData {
 }
 
 export interface CustomUser {
-  nodejs: {
-    messageId: string;
-    page: number;
-    versionPage: number;
-    version: string | undefined;
-  }
+  leaderboard: { messageId: string; page: number; };
+  nodejs: { messageId: string; page: number; versionPage: number; version: string | undefined; };
 }
 
 export interface User {
@@ -33,6 +29,7 @@ export interface User {
   name: string;
   xp: number;
   level: number;
+  messages: string;
 }
 
 export interface Event {

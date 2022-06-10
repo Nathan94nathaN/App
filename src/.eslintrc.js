@@ -25,7 +25,7 @@ module.exports = {
     "block-scoped-var": "error",
     "camelcase": "error",
     "class-methods-use-this": "off",
-    "complexity": ["error", 30],
+    "complexity": ["error", 50],
     "consistent-return": "off",
     "consistent-this": ["error", "that"],
     "curly": ["error", "multi"],

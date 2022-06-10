@@ -1,27 +1,38 @@
 import { ButtonInteraction, CommandInteraction, MessageComponentInteraction, SelectMenuInteraction } from "discord.js"
-import type { Event, SlashCommand } from "../@types/index"
+import type { Event } from "../@types/index"
 import Game from "../base/client"
-const nodejs: string[] = require("../../nodejs.json");
+import { kFormatter } from "../utils";
 
-export const name: Event["name"] = "interactionCreate"
+const nodejs: { [key: string]: { [key: string]: string } } = require("../../nodejs.json");
+
+function getURLDesc(urls: { [key: string]: string }) {
+  return Object.keys(urls).map(key => `[${key}](https://github.com/nodejs/node/blob/${urls[key]?.replace(" ", ".js#L")})`)
+}
+
+export const name: Event["name"] = "interactionCreate";
 export const execute: Event["execute"] = async (client: Game, interaction: CommandInteraction | MessageComponentInteraction | SelectMenuInteraction | ButtonInteraction) => {
   switch (interaction.type) {
     case "MESSAGE_COMPONENT":
       interaction = interaction as MessageComponentInteraction
       const user = client.collections.users.get(interaction.user.id)
-      if (user?.nodejs.messageId !== interaction.message.id) return
+
+      if (!user) return
+
+      const urls = nodejs[user.nodejs.version || "latest"]
+
+      if (user.nodejs.messageId !== interaction.message.id && user.leaderboard.messageId !== interaction.message.id) return
       switch (interaction.componentType) {
         case "SELECT_MENU":
           if (interaction.customId.startsWith("nodejs")) {
-            const nodejsVersion = (interaction as SelectMenuInteraction).values[0],
-              urls = JSON.parse((await client.request(`/docs/${nodejsVersion}/apilinks.json`)))
-
+            const nodejsVersion = (interaction as SelectMenuInteraction).values[0]
             if (user) user.nodejs.version = nodejsVersion
+
+            if (!urls) return
 
             interaction.update({
               embeds: [{
                 title: `Informations about version __${nodejsVersion}__ nodejs`,
-                description: Object.keys(urls).map(key => `[${key}](${urls[key]})`).slice(0, 30).join("\n"),
+                description: getURLDesc(urls).slice(0, 30).join("\n"),
               }],
               components: [{
                 type: "ACTION_ROW",
@@ -42,42 +53,18 @@ export const execute: Event["execute"] = async (client: Game, interaction: Comma
               if (interaction.customId === "nodejsPrevPage") interaction.update({
                 content: "Choose a version",
                 components: [
-                  {
+                  ...["nodejs0", "nodejs1", "nodejs2", "nodejs3"].map((customId, index): {
+                    type: "ACTION_ROW",
+                    components: { type: "SELECT_MENU", customId: string, placeholder: "Select a version", options: { label: string, value: string }[] }[]
+                  } => ({
                     type: "ACTION_ROW",
                     components: [{
                       type: "SELECT_MENU",
-                      customId: "nodejs0",
+                      customId,
                       placeholder: "Select a version",
-                      options: [...nodejs.slice(page + 0, page + 25).map(nodejs => ({ label: nodejs, value: nodejs }))]
+                      options: Object.keys(nodejs).slice(25 * index, 25 * (1 + index)).map(version => ({ label: version, value: version }))
                     }]
-                  },
-                  {
-                    type: "ACTION_ROW",
-                    components: [{
-                      type: "SELECT_MENU",
-                      customId: "nodejs1",
-                      placeholder: "Select a version",
-                      options: [...nodejs.slice(page + 25, page + 50).map(nodejs => ({ label: nodejs, value: nodejs }))]
-                    }]
-                  },
-                  {
-                    type: "ACTION_ROW",
-                    components: [{
-                      type: "SELECT_MENU",
-                      customId: "nodejs2",
-                      placeholder: "Select a version",
-                      options: [...nodejs.slice(page + 50, page + 75).map(nodejs => ({ label: nodejs, value: nodejs }))]
-                    }]
-                  },
-                  {
-                    type: "ACTION_ROW",
-                    components: [{
-                      type: "SELECT_MENU",
-                      customId: "nodejs3",
-                      placeholder: "Select a version",
-                      options: [...nodejs.slice(page + 75, page + 100).map(nodejs => ({ label: nodejs, value: nodejs }))]
-                    }]
-                  },
+                  })),
                   {
                     type: "ACTION_ROW",
                     components: [
@@ -87,49 +74,50 @@ export const execute: Event["execute"] = async (client: Game, interaction: Comma
                   }
                 ]
               }).then(() => user.nodejs.page--)
-              else if ((user.nodejs.page + 1) * 100 >= nodejs.length) {
+              else if ((user.nodejs.page + 1) * 100 >= Object.keys(nodejs).length) {
+                const versions = Object.keys(nodejs).slice(0, 100)
                 const components: {
                   type: "ACTION_ROW"; 
                   components: { type: "SELECT_MENU"; customId: string; placeholder: string; options: { label: string; value: string; }[]; }[];
                 }[] = []
     
-                if (nodejs.slice(page + 0, 25 + page).length !== 0) components.push({
+                if (versions.slice(page + 0, 25 + page).length !== 0) components.push({
                   type: "ACTION_ROW",
                   components: [{
                     type: "SELECT_MENU",
                     customId: "nodejs0",
                     placeholder: "Select a version",
-                    options: [...nodejs.slice(page + 0, 25 + page).map(nodejs => ({ label: nodejs, value: nodejs }))]
+                    options: [...versions.slice(page + 0, 25 + page).map(version => ({ label: version, value: version }))]
                   }]
                 })
     
-                if (nodejs.slice(page + 25, 50 + page).length !== 0) components.push({
+                if (versions.slice(page + 25, 50 + page).length !== 0) components.push({
                   type: "ACTION_ROW",
                   components: [{
                     type: "SELECT_MENU",
                     customId: "nodejs1",
                     placeholder: "Select a version",
-                    options: [...nodejs.slice(page + 25, 50 + page).map(nodejs => ({ label: nodejs, value: nodejs }))]
+                    options: [...versions.slice(page + 25, 50 + page).map(version => ({ label: version, value: version }))]
                   }]
                 })
     
-                if (nodejs.slice(page + 50, 75 + page).length !== 0) components.push({
+                if (versions.slice(page + 50, 75 + page).length !== 0) components.push({
                   type: "ACTION_ROW",
                   components: [{
                     type: "SELECT_MENU",
                     customId: "nodejs2",
                     placeholder: "Select a version",
-                    options: [...nodejs.slice(page + 50, 75 + page).map(nodejs => ({ label: nodejs, value: nodejs }))]
+                    options: [...versions.slice(page + 50, 75 + page).map(version => ({ label: version, value: version }))]
                   }]
                 })
     
-                if (nodejs.slice(page + 75, 100 + page).length !== 0) components.push({
+                if (versions.slice(page + 75, 100 + page).length !== 0) components.push({
                   type: "ACTION_ROW",
                   components: [{
                     type: "SELECT_MENU",
                     customId: "nodejs3",
                     placeholder: "Select a version",
-                    options: [...nodejs.slice(page + 75, 100 + page).map(nodejs => ({ label: nodejs, value: nodejs }))]
+                    options: [...versions.slice(page + 75, 100 + page).map(version => ({ label: version, value: version }))]
                   }]
                 })
     
@@ -149,42 +137,18 @@ export const execute: Event["execute"] = async (client: Game, interaction: Comma
               } else interaction.update({
                 content: "Choose a version",
                 components: [
-                  {
+                  ...["nodejs0", "nodejs1", "nodejs2", "nodejs3"].map((customId, index): {
+                    type: "ACTION_ROW",
+                    components: { type: "SELECT_MENU", customId: string, placeholder: "Select a version", options: { label: string, value: string }[] }[]
+                  } => ({
                     type: "ACTION_ROW",
                     components: [{
                       type: "SELECT_MENU",
-                      customId: "nodejs0",
+                      customId,
                       placeholder: "Select a version",
-                      options: [...nodejs.slice(page + 0, page + 25).map(nodejs => ({ label: nodejs, value: nodejs }))]
+                      options: Object.keys(nodejs).slice(25 * index, 25 * (1 + index)).map(version => ({ label: version, value: version }))
                     }]
-                  },
-                  {
-                    type: "ACTION_ROW",
-                    components: [{
-                      type: "SELECT_MENU",
-                      customId: "nodejs1",
-                      placeholder: "Select a version",
-                      options: [...nodejs.slice(page + 25, page + 50).map(nodejs => ({ label: nodejs, value: nodejs }))]
-                    }]
-                  },
-                  {
-                    type: "ACTION_ROW",
-                    components: [{
-                      type: "SELECT_MENU",
-                      customId: "nodejs2",
-                      placeholder: "Select a version",
-                      options: [...nodejs.slice(page + 50, page + 75).map(nodejs => ({ label: nodejs, value: nodejs }))]
-                    }]
-                  },
-                  {
-                    type: "ACTION_ROW",
-                    components: [{
-                      type: "SELECT_MENU",
-                      customId: "nodejs3",
-                      placeholder: "Select a version",
-                      options: [...nodejs.slice(page + 75, page + 100).map(nodejs => ({ label: nodejs, value: nodejs }))]
-                    }]
-                  },
+                  })),
                   {
                     type: "ACTION_ROW",
                     components: [
@@ -197,13 +161,14 @@ export const execute: Event["execute"] = async (client: Game, interaction: Comma
               break;
             case "nodejsVersionPrevPage":
             case "nodejsVersionNextPage":
-              const versionPage = user.nodejs.versionPage + (interaction.customId === "nodejsVersionPrevPage" ? -2 : 0),
-                urls = JSON.parse((await client.request(`/docs/${user.nodejs.version}/apilinks.json`)))
+              const versionPage = user.nodejs.versionPage + (interaction.customId === "nodejsVersionPrevPage" ? -2 : 0)
+
+              if (!urls) return
 
               interaction.update({
                 embeds: [{
                   title: `Informations about version __${user.nodejs.version}__ nodejs`,
-                  description: Object.keys(urls).map(key => `[${key}](${urls[key]})`).slice(30 * versionPage, 30 + 30 * versionPage).join("\n"),
+                  description: getURLDesc(urls).slice(30 * versionPage, 30 + 30 * versionPage).join("\n"),
                 }],
                 components: [{
                   type: "ACTION_ROW",
@@ -213,6 +178,36 @@ export const execute: Event["execute"] = async (client: Game, interaction: Comma
                   ]
                 }]
               }).then(() => (interaction as ButtonInteraction).customId === "nodejsVersionPrevPage" ? user.nodejs.versionPage-- : user.nodejs.versionPage++)
+              break;
+            case "lbPrevPage":
+            case "lbNextPage":
+              const allUsers = await client.xp.getAllUsers()
+
+              if (interaction.customId === "lbNextPage") user.leaderboard.page++
+              else user.leaderboard.page--
+
+              const ldUsers = await client.xp.getLeaderboard(10 * user.leaderboard.page)
+
+              interaction.update({
+                embeds: [{
+                  title: "Leaderboard",
+                  description: "Server Rating",
+                  color: 0x00ff00,
+                  fields: ldUsers.slice(10 * (user.leaderboard.page - 1)).map((u, index) => ({
+                    name: `#${index + 10 * user.leaderboard.page}. ${interaction.guild?.members.cache.get(u["id"])?.displayName || client.users.cache.get(u["id"])?.username}`,
+                    value: `🔥 Level ➜ \`${u["level"]}\`\n🎩 XP ➜ \`${kFormatter(u["xp"])}\`\n🎖 Messages ➜ \`${kFormatter(u["messages"])}\``,
+                    inline: true
+                  })),
+                  footer: { text: `Page ${user.leaderboard.page}/${(allUsers.length - allUsers.length % 10) / 10 + (allUsers.length % 10 === 0 ? 0 : 1)}` }
+                }],
+                components: [{
+                  type: "ACTION_ROW",
+                  components: [
+                    { type: "BUTTON", customId: "lbPrevPage", style: "PRIMARY", label: "Previous Page", disabled: user.leaderboard.page <= 1 },
+                    { type: "BUTTON", customId: "lbNextPage", style: "PRIMARY", label: "Next Page", disabled: ldUsers.length >= allUsers.length },
+                  ]
+                }]
+              })
               break;
             default:
               break;
@@ -225,7 +220,7 @@ export const execute: Event["execute"] = async (client: Game, interaction: Comma
     case "APPLICATION_COMMAND":
       interaction = interaction as CommandInteraction
       
-      const command: SlashCommand | undefined = client.collections.commands.get(interaction.commandName)
+      const command = client.collections.commands.get(interaction.commandName)
       if (!command) return interaction.reply({ content: "Command not found" })
       
       command.execute(interaction, client)

@@ -6,7 +6,7 @@ export const name: SlashCommand["name"] = "rankmodify"
 export const category: SlashCommand["category"] = "general"
 export const cooldown: SlashCommand["cooldown"] = 2
 export const data: SlashCommand["data"] = { name: "rankmodify", type: 2 }
-export async function execute<Interaction extends UserContextMenuInteraction>(interaction: Interaction, client: Game): Promise<void> {
+export async function execute(interaction: UserContextMenuInteraction, client: Game): Promise<void> {
   if (!interaction.guild) return interaction.reply("This command can only be used in a server.")
   const member = interaction.guild.members.cache.get(interaction.targetId); const id = Math.random().toString(36).replace(/[^a-z]+/g, "").slice(0, 5)
   if (!member) return interaction.reply("This command can only be used in a server.")
