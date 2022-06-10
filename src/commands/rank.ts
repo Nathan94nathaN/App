@@ -2,6 +2,7 @@ import type { SlashCommand } from "../@types/index";
 import { CommandInteraction, ContextMenuInteraction } from "discord.js";
 import { CanvasRenderingContext2D, createCanvas, loadImage } from "canvas";
 import Game from "../base/client";
+import { kFormatter } from "../utils";
 
 function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, radius: number, fill: string, stroke = false) {
   if (typeof radius === "undefined") radius = 5;
@@ -28,10 +29,6 @@ function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, width: n
     ctx.fillStyle = fill;
     ctx.fill();
   }
-}
-
-function kFormatter(num: number): number | string {
-  return Math.abs(num) > 999 ? Math.sign(num) * Number((Math.abs(num) / 1000).toFixed(1)) + "k" : Math.sign(num) * Math.abs(num);
 }
 
 export const name: SlashCommand["name"] = "rank",

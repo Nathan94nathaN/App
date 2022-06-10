@@ -11,7 +11,7 @@ export default class XP {
 
   public async createUser({ userId }: { userId: string; }): Promise<InsertOneResult<Document>> {
     if (await this.getUser({ userId })) throw new Error("The user already exists.");
-    return await this.db.insertOne({ id: userId, xp: 0, level: 1 });
+    return await this.db.insertOne({ id: userId, xp: 0, level: 1, messages: 1 });
   }
 
   public async deleteUser({ userId }: { userId: string; }): Promise<DeleteResult> {
@@ -23,7 +23,7 @@ export default class XP {
     if (xp < 0) throw new TypeError("The xp is not a number.");
     const user = await this.getUser({ userId });
     if (!user) throw new Error("The user doesn't exists.");
-    return await this.db.updateOne({ id: userId }, { $inc: { xp: parseInt(xp.toString()) }, $set: { level: Math.floor(0.1 * Math.sqrt(user["xp"])) } });
+    return await this.db.updateOne({ id: userId }, { $inc: { xp: parseInt(xp.toString()), messages: Math.floor(user?.['message'] + 1) }, $set: { level: Math.floor(0.1 * Math.sqrt(user["xp"])) } });
   }
 
   public async addLevel({ userId, level }: { userId: string; level: number; }): Promise<UpdateResult> {

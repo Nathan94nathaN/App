@@ -33,6 +33,7 @@ export interface User {
   name: string;
   xp: number;
   level: number;
+  messages: number;
 }
 
 export interface Event {
