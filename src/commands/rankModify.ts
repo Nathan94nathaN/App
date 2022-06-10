@@ -58,7 +58,7 @@ export async function execute(interaction: UserContextMenuInteraction, client: G
                   collector?.on("collect", async i => {
                     if (i.customId === `yes_${id}`) {
                       await i.deferUpdate()
-                      await client.xp.addLevel({ userId: member.id, level }).then(async () => await msg.edit({
+                      await client.xp.addLevel(member.id, level).then(async () => await msg.edit({
                         content: `Added ${level} Levels to ${member}!`,
                         components: [{
                           type: "ACTION_ROW",
@@ -107,7 +107,7 @@ export async function execute(interaction: UserContextMenuInteraction, client: G
                   collector?.on("collect", async i => {
                     if (i.customId === `yes_${id}`) {
                       await i.deferUpdate()
-                      await client.xp.subtractLevel({ userId: member.id, level }).then(async () => {
+                      await client.xp.subtractLevel(member.id, level).then(async () => {
                         await msg.edit({
                           content: `Removed ${level} level from ${member}!`,
                           components: [{
@@ -175,7 +175,7 @@ export async function execute(interaction: UserContextMenuInteraction, client: G
                     collector?.on("collect", async i => {
                       if (i.customId === `yes_${id}`) {
                         await i.deferUpdate()
-                        await client.xp.addXP({ userId: member.id, xp }).then(async () => await msg.edit({
+                        await client.xp.addXP(member.id, xp).then(async () => await msg.edit({
                           content: `Added ${xp} XP to ${member}!`,
                           components: [{
                             type: "ACTION_ROW",
@@ -221,7 +221,7 @@ export async function execute(interaction: UserContextMenuInteraction, client: G
                     collector?.on("collect", async i => {
                       if (i.customId === `yes_${id}`) {
                         await i.deferUpdate()
-                        await client.xp.subtractXP({ userId: member.id, xp }).then(async () => {
+                        await client.xp.subtractXP(member.id, xp).then(async () => {
                           await msg.edit({
                             content: `Removed ${xp} XP from ${member}!`,
                             components: [{
