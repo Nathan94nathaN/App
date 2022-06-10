@@ -29,7 +29,7 @@ export interface User {
   name: string;
   xp: number;
   level: number;
-  messages: string;
+  messages: number;
 }
 
 export interface Event {

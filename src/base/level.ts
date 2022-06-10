@@ -84,7 +84,8 @@ export default class XP {
     return targetLevel ** 2 * 100;
   }
 
-  public async getRank(userId: string): Promise<number> {
-    return (await this.db.find().toArray()).sort((a, b) => b["level"] - a["level"] || b["xp"] - a["xp"]).findIndex(user => user["id"] === userId) + 1;
+  public async getRank({ userId }: { userId: string; }): Promise<number> {
+    const users = (await this.db.find().toArray()).sort((a, b) => b["level"] - a["level"] || b["xp"] - a["xp"]);
+    return users.findIndex(user => user["id"] === userId) + 1;
   }
 }
