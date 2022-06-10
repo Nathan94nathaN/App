@@ -13,7 +13,7 @@ export const execute: Event["execute"] = async (client: Game) => {
       process.env["TEST_MODE"]
         ? Routes.applicationGuildCommands(client.user.id, process.env["DEV_GUILD_ID"])
         : Routes.applicationCommands(client.user.id),
-      { body: client.commands.map((cmd: SlashCommand) => cmd.data) }
+      { body: client.collections.commands.map((cmd: SlashCommand) => cmd.data) }
     )
     
     new Manager(client, { guild: process.env["DEV_GUILD_ID"], prefix: "!", category: "Tickets", role: "982419830785327134" }).setModmail()

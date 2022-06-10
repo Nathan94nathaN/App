@@ -1,4 +1,4 @@
-import { ClientEvents, CommandInteraction, ContextMenuInteraction, UserContextMenuInteraction } from "discord.js"
+import { ClientEvents, CommandInteraction } from "discord.js"
 import Game from "../base/client";
 
 export type SlashCommandCategory = "general" | "moderation" | "owner";
@@ -17,6 +17,15 @@ export interface SlashCommandData {
   description?: string;
   options?: SlashCommandOption[];
   type?: number;
+}
+
+export interface CustomUser {
+  nodejs: {
+    messageId: string;
+    page: number;
+    versionPage: number;
+    version: string | undefined;
+  }
 }
 
 export interface User {
@@ -41,6 +50,8 @@ export interface Event {
   // eslint-disable-next-line no-unused-vars
   execute: (...args: any) => void;
 }
+
+export interface Cooldown { cooldown: true; }
 
 export interface SlashCommand {
   /**
@@ -72,7 +83,7 @@ export interface SlashCommand {
    * @param interaction The CommandInteraction object from the interactionCreate event.
    */
   // eslint-disable-next-line no-unused-vars
-  execute<Interaction extends ContextMenuInteraction | CommandInteraction | UserContextMenuInteraction>(interaction: Interaction, client?: Game): void;
+  execute<Interaction extends CommandInteraction>(interaction: Interaction, client?: Game): void;
 }
 
 export interface UserModel { save(): Promise<void>; }

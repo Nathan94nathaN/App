@@ -1,4 +1,4 @@
-import { Collection, DeleteResult, Document, InsertOneResult, UpdateResult, WithId } from "mongodb";
+  import { Collection, DeleteResult, Document, InsertOneResult, UpdateResult, WithId } from "mongodb";
 
 export default class XP {
   constructor(db: Collection) { this.db = db; }
