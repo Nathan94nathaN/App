@@ -31,7 +31,7 @@ if (process.env["MONGO_URI"]) new MongoClient(process.env["MONGO_URI"]).connect(
   
   setHandler("commands", (command: SlashCommand) => {
     if (command.name?.[0]) {
-      client.commands.set(command.name.toLowerCase(), command);
+      client.collections.commands.set(command.name.toLowerCase(), command);
       client.log(`Loaded command ${command.name[0].toUpperCase() + command.name.slice(1)}`, "command");
     }
   });

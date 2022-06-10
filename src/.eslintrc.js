@@ -24,8 +24,8 @@ module.exports = {
     "arrow-body-style": ["error", "as-needed"],
     "block-scoped-var": "error",
     "camelcase": "error",
-    "class-methods-use-this": "error",
-    "complexity": ["error", 20],
+    "class-methods-use-this": "off",
+    "complexity": ["error", 30],
     "consistent-return": "off",
     "consistent-this": ["error", "that"],
     "curly": ["error", "multi"],
@@ -36,6 +36,7 @@ module.exports = {
     "eqeqeq": ["error", "always"],
     "func-name-matching": "error",
     "func-names": ["error", "always"],
+    "no-case-declarations": "off",
     // Layout  & Formatting
     "array-bracket-newline": ["error", "consistent"],
     "array-bracket-spacing": ["error", "never"],

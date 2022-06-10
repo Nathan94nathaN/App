@@ -5,8 +5,6 @@ export default class XP {
 
   private db: Collection;
 
-  public static async generateRandomNumber(min: number, max: number) { return Math.random() * (max - min) + min; }
-
   public async getUser(userId: string): Promise<WithId<Document> | null> { return await this.db.findOne({ id: userId }); }
 
   public async createUser(userId: string): Promise<InsertOneResult<Document>> {
@@ -20,35 +18,35 @@ export default class XP {
   }
 
   public async addXP(userId: string, xp: number): Promise<UpdateResult> {
-    if (xp < 0) throw new TypeError("The xp is not a number.");
+    if (xp < 0) throw new RangeError("The xp is not a number.");
     const user = await this.getUser(userId);
     if (!user) throw new Error("The user doesn't exists.");
     return await this.db.updateOne({ id: userId }, { $inc: { xp: parseInt(xp.toString()) }, $set: { level: Math.floor(0.1 * Math.sqrt(user["xp"])) } });
   }
 
   public async addLevel(userId: string, level: number): Promise<UpdateResult> {
-    if (level < 0) throw new TypeError("The level is not a number.");
+    if (level < 0) throw new RangeError("The level is not a number.");
     const user = await this.getUser(userId);
     if (!user) throw new Error("The user doesn't exists.");
     return await this.db.updateOne({ id: userId }, { $inc: { level: parseInt(level.toString()) }, $set: { level: user["level"] ** 2 * 100 } });
   }
 
   public async setXP(userId: string, xp: number): Promise<UpdateResult> {
-    if (xp < 0) throw new TypeError("The xp is not a number.");
+    if (xp < 0) throw new RangeError("The xp is not a number.");
     const user = await this.getUser(userId);
     if (!user) throw new Error("The user doesn't exists.");
     return await this.db.updateOne({ id: userId }, { $set: { xp: parseInt(xp.toString()), level: Math.floor(0.1 * Math.sqrt(parseInt(xp.toString()))) } });
   }
 
   public async setLevel(userId: string, level: number): Promise<UpdateResult> {
-    if (level < 0 || level > 100) throw new TypeError("The level is not a number.");
+    if (level < 0 || level > 100) throw new RangeError("The level is not a number.");
     const user = await this.getUser(userId);
     if (!user) throw new Error("The user doesn't exists.");
     return await this.db.updateOne({ id: userId }, { $set: { level: parseInt(level.toString()) } });
   }
 
   public async subtractXP(userId: string, xp: number): Promise<UpdateResult> {
-    if (xp < 0) throw new TypeError("The xp is not a number.");
+    if (xp < 0) throw new RangeError("The xp is not a number.");
     const user = await this.getUser(userId);
     if (!user) throw new Error("The user doesn't exists.");
     user["xp"] -= parseInt(xp.toString());
@@ -58,7 +56,7 @@ export default class XP {
   }
 
   public async subtractLevel(userId: string, level: number): Promise<UpdateResult> {
-    if (level < 0) throw new TypeError("The level is not a number.");
+    if (level < 0) throw new RangeError("The level is not a number.");
     const user = await this.getUser(userId);
     if (!user) throw new Error("The user doesn't exists.");
     user["level"] -= parseInt(level.toString());
@@ -73,14 +71,13 @@ export default class XP {
     return users;
   }
 
-  static xpFor(targetLevel: number): number {
+  public static xpFor(targetLevel: number): number {
     if (isNaN(targetLevel) || isNaN(parseInt(targetLevel.toString()))) throw new TypeError("Target level should be a valid number.");
     if (targetLevel < 0) throw new RangeError("Target level should be a positive number.");
     return targetLevel ** 2 * 100;
   }
 
   public async getRank(userId: string): Promise<number> {
-    const users = (await this.db.find().toArray()).sort((a, b) => b["level"] - a["level"] || b["xp"] - a["xp"]);
-    return users.findIndex(user => user["id"] === userId) + 1;
+    return (await this.db.find().toArray()).sort((a, b) => b["level"] - a["level"] || b["xp"] - a["xp"]).findIndex(user => user["id"] === userId) + 1;
   }
 }
