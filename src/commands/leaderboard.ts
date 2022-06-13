@@ -15,7 +15,7 @@ export async function execute<Interaction extends CommandInteraction>(interactio
       title: "Leaderboard",
       description: "Server Rating",
       color: 0x00ff00,
-      fields: users.map((user, index) => ({
+      fields: users.sort((a, b) => b["level"] - b["level"] || b["xp"] - a["xp"]).map((user, index) => ({
         name: `#${index + 1}. ${interaction.guild?.members.cache.get(user["id"])?.displayName || client.users.cache.get(user["id"])?.username}`,
         value: `🔥 Level ➜ \`${user["level"]}\`\n🎩 XP ➜ \`${kFormatter(user["xp"])}\`\n🎖 Messages ➜ \`${kFormatter(user["messages"])}\``,
         inline: true

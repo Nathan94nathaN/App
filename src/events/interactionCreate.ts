@@ -193,8 +193,8 @@ export const execute: Event["execute"] = async (client: Game, interaction: Comma
                   title: "Leaderboard",
                   description: "Server Rating",
                   color: 0x00ff00,
-                  fields: ldUsers.slice(10 * (user.leaderboard.page - 1)).map((u, index) => ({
-                    name: `#${index + 10 * user.leaderboard.page}. ${interaction.guild?.members.cache.get(u["id"])?.displayName || client.users.cache.get(u["id"])?.username}`,
+                  fields: ldUsers.slice(10 * (user.leaderboard.page - 1)).sort((a, b) => b["level"] - b["level"] || b["xp"] - a["xp"]).map((u, index) => ({
+                    name: `#${index + 10 * (user.leaderboard.page - 1) + 1}. ${interaction.guild?.members.cache.get(u["id"])?.displayName || client.users.cache.get(u["id"])?.username}`,
                     value: `🔥 Level ➜ \`${u["level"]}\`\n🎩 XP ➜ \`${kFormatter(u["xp"])}\`\n🎖 Messages ➜ \`${kFormatter(u["messages"])}\``,
                     inline: true
                   })),
