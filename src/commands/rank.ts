@@ -31,7 +31,6 @@ function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, width: n
   }
 }
 
-export const name: SlashCommand["name"] = "rank";
 export const category: SlashCommand["category"] = "general";
 export const cooldown: SlashCommand["cooldown"] = 2;
 export const data: SlashCommand["data"] = {

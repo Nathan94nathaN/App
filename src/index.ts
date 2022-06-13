@@ -1,7 +1,7 @@
 import Game from "./base/client";
 import { readdirSync } from "fs";
 import { MongoClient } from "mongodb";
-import * as path from "path";
+import { resolve } from "path";
 import { config } from "dotenv";
 import { Event, SlashCommand } from "./@types";
 import XP from "./base/level";
@@ -18,21 +18,23 @@ if (process.env["MONGO_URI"]) new MongoClient(process.env["MONGO_URI"]).connect(
   if (client.dbs.users) client.xp = new XP(client.dbs.users);
 
   // eslint-disable-next-line no-unused-vars
-  function setHandler<Exportation extends Event | SlashCommand>(dir: string, cb: (exportation: Exportation) => void): void {
-    readdirSync(path.resolve(__dirname, dir)).filter(file => file.endsWith(".ts")).forEach(file => cb(require(path.resolve(__dirname, dir, file))));
+  function setHandler<Exportation extends Event | SlashCommand>(dir: string, cb: (exportation: Exportation, fileName: string) => void): void {
+    readdirSync(resolve(__dirname, dir)).filter(file => file.endsWith(".ts")).forEach(file => {
+      cb(require(resolve(__dirname, dir, file)), file.split(".")[0] as string)
+    });
   }
   
-  setHandler("events", (event: Event) => {
-    if (event.name?.[0]) {
-      client.on(event.name, (...args) => event.execute(client, ...args));
-      client.log(`Loaded event ${event.name[0].toUpperCase() + event.name.slice(1)}`, "event");
+  setHandler("events", (event: Event, fileName: string) => {
+    if (fileName[0]) {
+      client.on(fileName, (...args) => event.execute(client, ...args));
+      client.log(`Loaded event ${fileName[0].toUpperCase() + fileName.slice(1)}`, "event");
     }
   });
   
-  setHandler("commands", (command: SlashCommand) => {
-    if (command.name?.[0]) {
-      client.collections.commands.set(command.name.toLowerCase(), command);
-      client.log(`Loaded command ${command.name[0].toUpperCase() + command.name.slice(1)}`, "command");
+  setHandler("commands", (command: SlashCommand, fileName: string) => {
+    if (fileName[0]) {
+      client.collections.commands.set(fileName.toLowerCase(), command);
+      client.log(`Loaded command ${fileName[0].toUpperCase() + fileName.slice(1)}`, "command");
     }
   });
   

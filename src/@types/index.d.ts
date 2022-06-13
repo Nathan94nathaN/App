@@ -1,4 +1,4 @@
-import { ClientEvents, CommandInteraction } from "discord.js"
+import { CommandInteraction } from "discord.js"
 import Game from "../base/client";
 
 export type SlashCommandCategory = "general" | "moderation" | "owner";
@@ -26,18 +26,12 @@ export interface CustomUser {
 
 export interface User {
   id: string;
-  name: string;
   xp: number;
   level: number;
   messages: number;
-  rank: undefined | number;
 }
 
 export interface Event {
-  /**
-   * The name of the event.
-   */
-  name: keyof ClientEvents;
   /**
    * If this event must be called only once.
    */
@@ -52,10 +46,6 @@ export interface Event {
 export interface Cooldown { cooldown: true; }
 
 export interface SlashCommand {
-  /**
-   * The name of the command.
-   */
-  name: string;
   /**
    * The cooldown of the command.
    */

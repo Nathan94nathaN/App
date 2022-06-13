@@ -4,7 +4,6 @@ import Game from "../base/client";
 
 const nodejs = Object.keys(require("../../nodejs.json"));
 
-export const name: SlashCommand["name"] = "nodejs";
 export const category: SlashCommand["category"] = "general";
 export const cooldown: SlashCommand["cooldown"] = 2;
 export const data: SlashCommand["data"] = { name: "nodejs", description: "nodejs command" };

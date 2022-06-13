@@ -3,21 +3,19 @@ import { Message } from "discord.js";
 import Game from "../base/client";
 import { inspect } from "util";
 
-export const name: Event["name"] = "messageCreate";
 export const execute: Event["execute"] = async (client: Game, message: Message): Promise<Message<boolean> | void> => {
-  function evalCmdRes(value: string | unknown) {
-    if (typeof value === "string" && typeof client.token === "string" && value.includes(client.token)) value = value.replace(new RegExp(client.token, "gi"), "T0K3N");
+  function evalCmdRes(value: string) {
+    if (client.token && value.includes(client.token)) value = value.replace(new RegExp(client.token, "gi"), "T0K3N");
     try { message.channel.send({ embeds: [{ description: `\`\`\`js\n${value}\n\`\`\`` }] }); } catch (e) { console.error(e); }
   }
 
   if (message.author.bot || !client.isReady()) return;
-  if (message.content.startsWith("!eval") && process.env["OWNERS"] && process.env["OWNERS"].includes(message.author.id))
-    return new Promise(resolve => { resolve(eval(message.content.slice(6).replace(/client.token/gi, "'T0K3N'"))) }).then(output => {
-      evalCmdRes(typeof output !== "string" ? inspect(output, { depth: 0 }) : output);
-    }).catch(err => {
-      client.log(err, "error");
-      evalCmdRes(err.toString());
-    });
+  if (message.content.startsWith("!eval") && process.env["OWNERS"]?.includes(message.author.id)) return new Promise(resolve => {
+    resolve(eval(message.content.slice(6).replace(/client.token/gi, "'T0K3N'")))
+  }).then(output => evalCmdRes(typeof output !== "string" ? inspect(output, { depth: 0 }) : output)).catch(err => {
+    client.log(err, "error");
+    evalCmdRes(err.toString());
+  });
 
   // xp
 
@@ -40,13 +38,13 @@ export const execute: Event["execute"] = async (client: Game, message: Message):
       embeds: [
         {
           title: `Suggestion from ${message.author.username} (${message.author.id})`,
-          description: `${suggestion}\n\n Date : ${new Date().toLocaleString('fr-FR', { timeZone: 'Europe/Paris' })}`,
+          description: `${suggestion}\n\n Date : ${new Date().toLocaleString("fr-FR", { timeZone: "Europe/Paris" })}`,
           thumbnail: { url: message.author.displayAvatarURL({ format: "png", dynamic: true }) },
           color: 0x00ff00,
           footer: { text: client.user.username, iconURL: client.user.displayAvatarURL({ format: "png", dynamic: true }) }
         },
       ],
-    }).then((msg) => {
+    }).then(msg => {
       msg.react("✅");
       msg.react("❌");
     })

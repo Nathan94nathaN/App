@@ -9,7 +9,6 @@ function getURLDesc(urls: { [key: string]: string }) {
   return Object.keys(urls).map(key => `[${key}](https://github.com/nodejs/node/blob/${urls[key]?.replace(" ", ".js#L")})`)
 }
 
-export const name: Event["name"] = "interactionCreate";
 export const execute: Event["execute"] = async (client: Game, interaction: CommandInteraction | MessageComponentInteraction | SelectMenuInteraction | ButtonInteraction) => {
   switch (interaction.type) {
     case "MESSAGE_COMPONENT":

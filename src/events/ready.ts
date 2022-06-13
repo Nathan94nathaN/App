@@ -4,7 +4,6 @@ import { Routes } from "discord-api-types/v9"
 import { VoiceChannel } from "discord.js"
 import { Manager } from "../../node_modules/modmail.djs/lib/src"
 
-export const name: Event["name"] = "ready"
 export const execute: Event["execute"] = async (client: Game) => {
   client.log(`Logged in as ${client.user?.username}`, "info")
 

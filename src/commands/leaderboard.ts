@@ -3,7 +3,6 @@ import { CustomUser, SlashCommand } from "../@types/index";
 import Game from "../base/client";
 import { kFormatter } from "../utils";
 
-export const name: SlashCommand["name"] = "leaderboard";
 export const category: SlashCommand["category"] = "general";
 export const cooldown: SlashCommand["cooldown"] = 2;
 export const data: SlashCommand["data"] = { name: "leaderboard", description: "Leaderboard command" };
