@@ -43,9 +43,9 @@ export const execute: SlashCommand["execute"] = async (interaction: CommandInter
   await interaction.deferReply();
   if (interaction.options.getUser("user")?.bot) return interaction.reply({ content: "Bots have no rank" });
   const interactionUser = interaction.options.getUser("user") || interaction.user
-  const user = await client.xp.getUser(interactionUser.id);
+  const user = await client.xp.getUser({ userId: interactionUser.id });
   if (!user) return interaction.reply({ content: "This user have no rank" });
-  const xp = client.xp.xpFor(user["level"] + 1)
+  const xp = client.xp.xpFor({ targetLevel: user["level"] + 1 })
   return client.xp.getRank(user["id"]).then(async rank => {
     const canvas = createCanvas(1040, 330), ctx = canvas.getContext("2d");
     ctx.beginPath();

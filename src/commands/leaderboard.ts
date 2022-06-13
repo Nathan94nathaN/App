@@ -8,7 +8,7 @@ export const category: SlashCommand["category"] = "general";
 export const cooldown: SlashCommand["cooldown"] = 2;
 export const data: SlashCommand["data"] = { name: "leaderboard", description: "Leaderboard command" };
 export async function execute<Interaction extends CommandInteraction>(interaction: Interaction, client: Game): Promise<void> {
-  const users = await client.xp.getLeaderboard(10), allUsers = await client.xp.getAllUsers()
+  const users = await client.xp.getLeaderboard({ limit: 10 }), allUsers = await client.xp.getAllUsers()
 
   interaction.reply({
     embeds: [{

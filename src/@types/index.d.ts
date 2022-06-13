@@ -30,6 +30,7 @@ export interface User {
   xp: number;
   level: number;
   messages: number;
+  rank: undefined | number;
 }
 
 export interface Event {

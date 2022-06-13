@@ -186,7 +186,7 @@ export const execute: Event["execute"] = async (client: Game, interaction: Comma
               if (interaction.customId === "lbNextPage") user.leaderboard.page++
               else user.leaderboard.page--
 
-              const ldUsers = await client.xp.getLeaderboard(10 * user.leaderboard.page)
+              const ldUsers = await client.xp.getLeaderboard({ limit: 10 * user.leaderboard.page })
 
               interaction.update({
                 embeds: [{
