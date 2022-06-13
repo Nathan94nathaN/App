@@ -1,10 +1,10 @@
-module.exports = {
-  env: { commonjs: true, es2021: true, node: true },
-  extends: "eslint:recommended",
-  parser: "@typescript-eslint/parser",
-  parserOptions: { ecmaVersion: "latest" },
-  plugins: ["@typescript-eslint"],
-  rules: {
+{
+  "env": { "commonjs": true, "es2021": true, "node": true },
+  "extends": "eslint:recommended",
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": { "ecmaVersion": "latest" },
+  "plugins": ["@typescript-eslint"],
+  "rules": {
     // Possible problems
     "array-callback-return": "error",
     "no-await-in-loop": "error",
@@ -43,6 +43,6 @@ module.exports = {
     "array-element-newline": ["error", "consistent"],
     "arrow-parens": ["error", "as-needed"],
     "arrow-spacing": "error",
-    "quotes": ["error", "double"],
+    "quotes": ["error", "double"]
   }
 }

@@ -22,10 +22,33 @@ export const execute: Event["execute"] = async (client: Game, message: Message):
   // xp
 
   client.xp.getUser({ userId: message.author.id }).then(user => {
-    if (!user) client.xp.createUser({ userId: message.author.id });
+    if (user === null) client.xp.createUser({ userId: message.author.id });
     client.collections.cooldowns.get(message.author.id) ?? client.xp.addXP({ userId: message.author.id, xp: client.xp.generateRandomNumber({ min: 1, max: 35 }) }).then(() => {
       client.collections.cooldowns.set(message.author.id, { cooldown: true });
       setTimeout(() => client.collections.cooldowns.delete(message.author.id), 60000);
     });
   });
+
+  // suggestions
+
+  if (message.channelId === process.env["SUGGESTION_CHANNEL_ID"]) {
+    if(message.member?.permissions.has("MANAGE_MESSAGES")) return;
+    const suggestion = message.content;
+    if (suggestion.length < 2) return message.delete();
+    message.delete();
+    message.channel.send({
+      embeds: [
+        {
+          title: `Suggestion from ${message.author.username} (${message.author.id})`,
+          description: `${suggestion}\n\n Date : ${new Date().toLocaleString('fr-FR', { timeZone: 'Europe/Paris' })}`,
+          thumbnail: { url: message.author.displayAvatarURL({ format: "png", dynamic: true }) },
+          color: 0x00ff00,
+          footer: { text: client.user.username, iconURL: client.user.displayAvatarURL({ format: "png", dynamic: true }) }
+        },
+      ],
+    }).then((msg) => {
+      msg.react("✅");
+      msg.react("❌");
+    })
+  }
 };
