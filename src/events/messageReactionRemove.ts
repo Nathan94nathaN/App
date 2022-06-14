@@ -21,6 +21,9 @@ export const execute: Event["execute"] = (_client: Game, reaction: MessageReacti
     case "csharp":
       roles.remove("985959174477336577")
       break;
+    case "kotlin":
+      roles.remove("985959113114652712")
+      break;
     default:
       break;
   }
