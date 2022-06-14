@@ -45,7 +45,7 @@ export const execute: SlashCommand["execute"] = async (interaction: CommandInter
   const user = await client.xp.getUser({ userId: interactionUser.id });
   if (!user) return interaction.reply({ content: "This user have no rank" });
   const xp = client.xp.xpFor({ targetLevel: user["level"] + 1 })
-  return client.xp.getRank(user["id"]).then(async rank => {
+  return client.xp.getRank({ userId: user["id"] }).then(async rank => {
     const canvas = createCanvas(1040, 330), ctx = canvas.getContext("2d");
     ctx.beginPath();
     const img = await loadImage(
