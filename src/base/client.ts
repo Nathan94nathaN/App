@@ -4,6 +4,7 @@ import { Collection as MongoCollection } from "mongodb";
 import { REST } from "@discordjs/rest";
 import { Cooldown, CustomUser, LoggerLevel, SlashCommand } from "../@types";
 import XP from "./level";
+import Log from "./logs";
 
 enum LoggerColors {
   /* eslint-disable no-unused-vars */
@@ -17,6 +18,7 @@ enum LoggerColors {
 export default class Game extends Client {
   collections: { commands: Collection<string, SlashCommand>, cooldowns: Collection<string, Cooldown>, users: Collection<String, CustomUser> };
   xp!: XP
+  logs!: Log;
   dbs!: { users: MongoCollection | undefined; };
   _rest: REST;
   colors: {

@@ -1,12 +1,13 @@
 import Game from "../base/client"
 import { Event, SlashCommand } from "../@types"
 import { Routes } from "discord-api-types/v9"
-import { VoiceChannel } from "discord.js"
-import { Manager } from "../../node_modules/modmail.djs/lib/src"
+import { VoiceChannel, TextChannel } from "discord.js"
+import Log from "../base/logs";
+import { Manager } from "modmail.djs"
 
 export const execute: Event["execute"] = async (client: Game) => {
   client.log(`Logged in as ${client.user?.username}`, "info")
-
+  client.logs = new Log(client.channels.cache.get(process.env["LOG_CHANNEL_ID"] as string) as TextChannel);
   if (process.env["DEV_GUILD_ID"]) {
     if (client.user?.id) await client._rest.put(
       process.env["TEST_MODE"]

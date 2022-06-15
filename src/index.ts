@@ -15,7 +15,7 @@ if (process.env["MONGO_URI"]) new MongoClient(process.env["MONGO_URI"]).connect(
 
   client.log("Connected to MongoDB", "info")
   client.dbs = { users: mongoClient?.db("data").collection("users") }
-  if (client.dbs.users) client.xp = new XP(client.dbs.users);
+  if (client.dbs.users) client.xp = new XP(client.dbs.users)
 
   // eslint-disable-next-line no-unused-vars
   function setHandler<Exportation extends Event | SlashCommand>(dir: string, cb: (exportation: Exportation, fileName: string) => void): void {
@@ -38,10 +38,14 @@ if (process.env["MONGO_URI"]) new MongoClient(process.env["MONGO_URI"]).connect(
     }
   });
   
-  process.on("unhandledRejection", (err: Error) => client.log(err.stack || err.message, "error")).on("uncaughtException", (err: Error) => {
-    client.log(err.stack || err.message, "error");
-    process.exit(1);
-  });
+  process
+    .on("unhandledRejection", (err: Error) =>
+      client.log(err.stack || err.message, "error")
+    )
+    .on("uncaughtException", (err: Error) => {
+      client.log(err.stack || err.message, "error");
+      process.exit(1);
+    });
 
   client.login(process.env["CLIENT_TOKEN"]);
 });
