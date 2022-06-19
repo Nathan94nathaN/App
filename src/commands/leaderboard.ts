@@ -7,7 +7,7 @@ export const category: SlashCommand["category"] = "general";
 export const cooldown: SlashCommand["cooldown"] = 2;
 export const data: SlashCommand["data"] = { name: "leaderboard", description: "Leaderboard command" };
 export async function execute<Interaction extends CommandInteraction>(interaction: Interaction, client: Game): Promise<void> {
-  const users = await client.xp.getLeaderboard({ limit: 10 }), allUsers = await client.xp.getAllUsers()
+  const users = await client.xp.getLeaderboard(10), allUsers = await client.xp.getAllUsers()
 
   interaction.reply({
     embeds: [{
@@ -30,10 +30,7 @@ export async function execute<Interaction extends CommandInteraction>(interactio
     }] : []
   }).then(async (): Promise<Collection<String, CustomUser> | void> => {
     const user = client.collections.users.get(interaction.user.id)
-    if (!user) return client.collections.users.set(interaction.user.id, {
-      leaderboard: { messageId: (await interaction.fetchReply()).id, page: 1 },
-      nodejs: { page: 1, messageId: "", versionPage: 1, version: undefined }
-    });
+    if (!user) return client.collections.users.set(interaction.user.id, { leaderboard: { messageId: (await interaction.fetchReply()).id, page: 1 } });
     user.leaderboard.messageId = (await interaction.fetchReply()).id
     user.leaderboard.page = 1
     return;

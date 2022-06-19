@@ -15,7 +15,7 @@ if (process.env["MONGO_URI"]) new MongoClient(process.env["MONGO_URI"]).connect(
 
   client.log("Connected to MongoDB", "info")
   client.dbs = { users: mongoClient?.db("data").collection("users") }
-  if (client.dbs.users) client.xp = new XP(client.dbs.users);
+  if (client.dbs.users) client.xp = new XP(client.dbs.users)
 
   // eslint-disable-next-line no-unused-vars
   function setHandler<Exportation extends Event | SlashCommand>(dir: string, cb: (exportation: Exportation, fileName: string) => void): void {
@@ -25,7 +25,7 @@ if (process.env["MONGO_URI"]) new MongoClient(process.env["MONGO_URI"]).connect(
   }
   
   setHandler("events", (event: Event, fileName: string) => {
-    if (fileName[0]) {
+    if (fileName[0] && event.execute) {
       client.on(fileName, (...args) => event.execute(client, ...args));
       client.log(`Loaded event ${fileName[0].toUpperCase() + fileName.slice(1)}`, "event");
     }

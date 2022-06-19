@@ -19,10 +19,7 @@ export interface SlashCommandData {
   type?: number;
 }
 
-export interface CustomUser {
-  leaderboard: { messageId: string; page: number; };
-  nodejs: { messageId: string; page: number; versionPage: number; version: string | undefined; };
-}
+export interface CustomUser { leaderboard: { messageId: string; page: number; }; }
 
 export interface User {
   id: string;

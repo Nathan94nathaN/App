@@ -19,9 +19,9 @@ export const execute: Event["execute"] = async (client: Game, message: Message):
 
   // xp
 
-  client.xp.getUser({ userId: message.author.id }).then(user => {
-    if (user === null) client.xp.createUser({ userId: message.author.id });
-    client.collections.cooldowns.get(message.author.id) ?? client.xp.addXP({ userId: message.author.id, xp: client.xp.generateRandomNumber({ min: 1, max: 35 }) }).then(() => {
+  client.xp.getUser(message.author.id).then(user => {
+    if (user === null) client.xp.createUser(message.author.id);
+    client.collections.cooldowns.get(message.author.id) ?? client.xp.addXP(message.author.id, client.xp.generateRandomNumber(1, 35)).then(() => {
       client.collections.cooldowns.set(message.author.id, { cooldown: true });
       setTimeout(() => client.collections.cooldowns.delete(message.author.id), 60000);
     });

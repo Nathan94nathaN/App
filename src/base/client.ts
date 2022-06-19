@@ -1,22 +1,16 @@
 /* eslint-disable no-unused-vars */
-import { Client, Collection, ClientOptions } from "discord.js";
+import { Client, Collection, ClientOptions, TextChannel } from "discord.js";
 import { Collection as MongoCollection } from "mongodb";
 import { REST } from "@discordjs/rest";
 import { Cooldown, CustomUser, LoggerLevel, SlashCommand } from "../@types";
 import XP from "./level";
 
-enum LoggerColors {
-  /* eslint-disable no-unused-vars */
-  database = "blue",
-  error = "red",
-  info = "green",
-  event = "yellow",
-  command = "cyan"
-}
+enum LoggerColors { database = "blue", error = "red", info = "green", event = "yellow", command = "cyan" }
 
 export default class Game extends Client {
   collections: { commands: Collection<string, SlashCommand>, cooldowns: Collection<string, Cooldown>, users: Collection<String, CustomUser> };
   xp!: XP
+  logChannel!: TextChannel
   dbs!: { users: MongoCollection | undefined; };
   _rest: REST;
   colors: {
