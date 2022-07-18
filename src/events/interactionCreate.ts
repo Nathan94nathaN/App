@@ -1,18 +1,18 @@
-import { ButtonInteraction, CommandInteraction, GuildMemberRoleManager, MessageComponentInteraction, SelectMenuInteraction } from "discord.js"
+import { ButtonInteraction, ButtonStyle, CommandInteraction, ComponentType, GuildMemberRoleManager, InteractionType, MessageComponentInteraction, SelectMenuInteraction } from "discord.js"
 import type { Event } from "../@types/index"
 import Game from "../base/client"
 import { kFormatter } from "../utils";
 
 export const execute: Event["execute"] = async (client: Game, interaction: CommandInteraction | MessageComponentInteraction | SelectMenuInteraction | ButtonInteraction) => {
   switch (interaction.type) {
-    case "MESSAGE_COMPONENT":
+    case InteractionType.MessageComponent:
       interaction = interaction as MessageComponentInteraction
       const user = client.collections.users.get(interaction.user.id)
 
       if (user?.leaderboard.messageId !== interaction.message.id && interaction.message.id !== process.env["GET_ROLES_MESSAGE_ID"]) return
 
       switch (interaction.componentType) {
-        case "BUTTON":
+        case ComponentType.Button:
           switch (interaction.customId) {
             case "lbPrevPage":
             case "lbNextPage":
@@ -38,10 +38,10 @@ export const execute: Event["execute"] = async (client: Game, interaction: Comma
                   footer: { text: `Page ${user.leaderboard.page}/${(allUsers.length - allUsers.length % 10) / 10 + (allUsers.length % 10 === 0 ? 0 : 1)}` }
                 }],
                 components: [{
-                  type: "ACTION_ROW",
+                  type: ComponentType.ActionRow,
                   components: [
-                    { type: "BUTTON", customId: "lbPrevPage", style: "PRIMARY", label: "Previous Page", disabled: user.leaderboard.page <= 1 },
-                    { type: "BUTTON", customId: "lbNextPage", style: "PRIMARY", label: "Next Page", disabled: ldUsers.length >= allUsers.length },
+                    { type: ComponentType.Button, customId: "lbPrevPage", style: ButtonStyle.Primary, label: "Previous Page", disabled: user.leaderboard.page <= 1 },
+                    { type: ComponentType.Button, customId: "lbNextPage", style: ButtonStyle.Primary, label: "Next Page", disabled: ldUsers.length >= allUsers.length },
                   ]
                 }]
               })
@@ -74,7 +74,7 @@ export const execute: Event["execute"] = async (client: Game, interaction: Comma
           break;
       }
       break;
-    case "APPLICATION_COMMAND":
+    case InteractionType.ApplicationCommand:
       interaction = interaction as CommandInteraction
       
       const command = client.collections.commands.get(interaction.commandName)

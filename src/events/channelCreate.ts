@@ -2,12 +2,12 @@ import { TextChannel } from "discord.js";
 import type { Event } from "../@types/index";
 import Game from "../base/client";
 export const execute: Event["execute"] = async (client: Game, channel: TextChannel) => {
-  const iconURL = channel.guild.iconURL({ format: "png", dynamic: true })
+  const iconURL = channel.guild.iconURL({ extension: "png" })
 
   client.logChannel.send({ embeds: [{
-    author: iconURL ? { name: `${channel.guild.name}`, iconURL: iconURL } : { name: `${channel.guild.name}` },
+    author: iconURL ? { name: `${channel.guild.name}`, icon_url: iconURL } : { name: `${channel.guild.name}` },
     description: `📁 | New channel : ${channel}`,
-    timestamp: new Date(),
+    timestamp: new Date().toISOString(),
     footer: { text: channel.id }
   }] });
 };

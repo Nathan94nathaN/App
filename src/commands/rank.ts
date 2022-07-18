@@ -38,7 +38,7 @@ export const data: SlashCommand["data"] = {
   description: "rank command",
   options: [{ type: 6, name: "user", description: "user to rank", required: false }],
 };
-export const execute: SlashCommand["execute"] = async (interaction: CommandInteraction, client: Game): Promise<void> => {
+export const execute: SlashCommand["execute"] = async (interaction: CommandInteraction, client: Game): Promise<any> => {
   await interaction.deferReply();
   if (interaction.options.getUser("user")?.bot) return interaction.reply({ content: "Bots have no rank" });
   const interactionUser = interaction.options.getUser("user") || interaction.user
@@ -59,7 +59,7 @@ export const execute: SlashCommand["execute"] = async (interaction: CommandInter
     ctx.fill();
     ctx.globalAlpha = 1;
     ctx.closePath();
-    const avatar = await loadImage(interactionUser.displayAvatarURL({ format: "png", size: 2048 }));
+    const avatar = await loadImage(interactionUser.displayAvatarURL({ extension: "png", size: 2048 }));
     ctx.save();
 
     ctx.beginPath();

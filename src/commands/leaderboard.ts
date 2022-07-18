@@ -1,4 +1,4 @@
-import { Collection, CommandInteraction } from "discord.js";
+import { ButtonStyle, Collection, CommandInteraction, ComponentType } from "discord.js";
 import { CustomUser, SlashCommand } from "../@types/index";
 import Game from "../base/client";
 import { kFormatter } from "../utils";
@@ -22,10 +22,10 @@ export async function execute<Interaction extends CommandInteraction>(interactio
       footer: { text: `Page 1/${(allUsers.length - allUsers.length % 10) / 10 + (allUsers.length % 10 === 0 ? 0 : 1)}` }
     }],
     components: users.length < allUsers.length ? [{
-      type: "ACTION_ROW",
+      type: ComponentType.ActionRow,
       components: [
-        { type: "BUTTON", customId: "lbPrevPage", style: "PRIMARY", label: "Previous Page", disabled: true },
-        { type: "BUTTON", customId: "lbNextPage", style: "PRIMARY", label: "Next Page" }
+        { type: ComponentType.Button, customId: "lbPrevPage", style: ButtonStyle.Primary, label: "Previous Page", disabled: true },
+        { type: ComponentType.Button, customId: "lbNextPage", style: ButtonStyle.Primary, label: "Next Page" }
       ]
     }] : []
   }).then(async (): Promise<Collection<String, CustomUser> | void> => {

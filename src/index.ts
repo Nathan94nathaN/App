@@ -5,13 +5,14 @@ import { resolve } from "path";
 import { config } from "dotenv";
 import { Event, SlashCommand } from "./@types";
 import XP from "./base/level";
+import { Partials } from "discord.js";
 
 config();
 
 if (process.env["MONGO_URI"]) new MongoClient(process.env["MONGO_URI"]).connect(async (err, mongoClient) => {
   if (err) throw err;
 
-  const client = new Game({ intents: 32767, partials: ["MESSAGE", "REACTION", "CHANNEL"] });
+  const client = new Game({ intents: 131071, partials: [Partials.Message, Partials.Reaction, Partials.Channel] });
 
   client.log("Connected to MongoDB", "info")
   client.dbs = { users: mongoClient?.db("data").collection("users") }

@@ -30,7 +30,7 @@ export const execute: Event["execute"] = async (client: Game, message: Message):
   // suggestions
 
   if (message.channelId === process.env["SUGGESTION_CHANNEL_ID"]) {
-    if(message.member?.permissions.has("MANAGE_MESSAGES")) return;
+    if(message.member?.permissions.has("ManageMessages")) return;
     const suggestion = message.content;
     if (suggestion.length < 2) return message.delete();
     message.delete();
@@ -39,9 +39,9 @@ export const execute: Event["execute"] = async (client: Game, message: Message):
         {
           title: `Suggestion from ${message.author.username} (${message.author.id})`,
           description: `${suggestion}\n\n Date : ${new Date().toLocaleString("fr-FR", { timeZone: "Europe/Paris" })}`,
-          thumbnail: { url: message.author.displayAvatarURL({ format: "png", dynamic: true }) },
+          thumbnail: { url: message.author.displayAvatarURL({ extension: "png" }) },
           color: 0x00ff00,
-          footer: { text: client.user.username, iconURL: client.user.displayAvatarURL({ format: "png", dynamic: true }) }
+          footer: { text: client.user.username, icon_url: client.user.displayAvatarURL({ extension: "png" }) }
         },
       ],
     }).then(msg => {
