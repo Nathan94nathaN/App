@@ -2,7 +2,7 @@ import Game from "../base/client"
 import { Event, SlashCommand } from "../@types"
 import { Routes } from "discord-api-types/v9"
 import { VoiceChannel, TextChannel } from "discord.js"
-// import { Manager } from "../../node_modules/modmail.djs/lib/src"
+import { Manager } from "modmail.djs"
 
 export const execute: Event["execute"] = async (client: Game) => {
   client.log(`Logged in as ${client.user?.username}`, "info")
@@ -14,8 +14,8 @@ export const execute: Event["execute"] = async (client: Game) => {
         : Routes.applicationCommands(client.user.id),
       { body: client.collections.commands.map((cmd: SlashCommand) => cmd.data) }
     )
-    
-    // new Manager(client, { guild: process.env["DEV_GUILD_ID"], prefix: "!", category: "Tickets", role: "982419830785327134" }).setModmail()
+
+    new Manager(client, { guild: process.env["DEV_GUILD_ID"], prefix: "!", category: "Tickets", role: "982419830785327134" }).setModmail()
   }
 
   const currDate = new Date(); const channel = process.env["HOUR_CHANNEL_ID"] ? client.channels.cache.get(process.env["HOUR_CHANNEL_ID"]) as VoiceChannel : null

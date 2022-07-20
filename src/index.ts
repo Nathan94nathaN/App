@@ -18,7 +18,6 @@ if (process.env["MONGO_URI"]) new MongoClient(process.env["MONGO_URI"]).connect(
   client.dbs = { users: mongoClient?.db("data").collection("users") }
   if (client.dbs.users) client.xp = new XP(client.dbs.users)
 
-  // eslint-disable-next-line no-unused-vars
   function setHandler<Exportation extends Event | SlashCommand>(dir: string, cb: (exportation: Exportation, fileName: string) => void): void {
     readdirSync(resolve(__dirname, dir)).filter(file => file.endsWith(".ts")).forEach(file => {
       cb(require(resolve(__dirname, dir, file)), file.split(".")[0] as string)

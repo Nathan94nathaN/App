@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { Client, Collection, ClientOptions, TextChannel } from "discord.js";
 import { Collection as MongoCollection } from "mongodb";
 import { REST } from "@discordjs/rest";

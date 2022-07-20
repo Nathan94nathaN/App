@@ -36,7 +36,6 @@ export interface Event {
   /**
    * The function that will be called when the event is triggered.
    */
-  // eslint-disable-next-line no-unused-vars
   execute: (...args: any) => void;
 }
 
@@ -67,7 +66,6 @@ export interface SlashCommand {
    * This is the function that will be called when the command is executed.
    * @param interaction The CommandInteraction object from the interactionCreate event.
    */
-  // eslint-disable-next-line no-unused-vars
   execute<Interaction extends CommandInteraction>(interaction: Interaction, client?: Game): void;
 }
 
